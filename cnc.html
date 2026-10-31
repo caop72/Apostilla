@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel CNC - Validación</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body { background-color: #f4f6f9; }
+    .navbar { background-color: #0d1b5e; }
+    .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 20px; }
+    .semaforo { width: 20px; height: 20px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 5px;}
+    .verde { background-color: #198754; box-shadow: 0 0 8px #198754; }
+    .amarillo { background-color: #ffc107; box-shadow: 0 0 8px #ffc107; }
+    .rojo { background-color: #dc3545; box-shadow: 0 0 8px #dc3545; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark mb-4">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">🇻🇪 Apostilla - Panel CNC</span>
+    <button class="btn btn-outline-light btn-sm" onclick="cerrarSesion()">Salir</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="card p-4">
+    <h5 class="mb-3">Reportes Recibidos (Pendientes de Validación)</h5>
+    
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Estado</th>
+            <th>Fecha/Hora</th>
+            <th>OPT</th>
+            <th>Citas</th>
+            <th>Docs (Val/Rech)</th>
+            <th>Monto (Bs)</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaReportes">
+          <tr>
+            <td colspan="7" class="text-center text-muted">Cargando datos del servidor...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx7aDFr2lTIQcLgwyOqGODXQQFzsJhivdL02huOwvX4iC1zSsEGts75QL3rED3BcR3zhw/exec";
+  
+  // Validar sesión
+  const usuario = sessionStorage.getItem('usuarioLogueado');
+  if (usuario !== 'CNC') {
+    window.location.href = 'index.html';
+  }
+
+  function cerrarSesion() {
+    sessionStorage.clear();
+    window.location.href = 'index.html';
+  }
+
+  // Cargar datos al iniciar
+  window.onload = function() {
+    cargarTabla();
+  }
+
+  function cargarTabla() {
+    const tbody = document.getElementById('tablaReportes');
+    
+    fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtenerPendientes' }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(response => response.json())
+    .then(resp => {
+      if (resp.exito && resp.datos.length > 0) {
+        tbody.innerHTML = '';
+        resp.datos.forEach(fila => {
+          // fila: [ID, Fecha, OPT, Citas, Docs, Rechazados, Validados, Monto, Estado]
+          let colorSemaforo = fila[8] === 'Pendiente' ? 'amarillo' : (fila[8] === 'Validado' ? 'verde' : 'rojo');
+          
+          let botones = '';
+          if (fila[8] === 'Pendiente') {
+             botones = `
+              <button class="btn btn-sm btn-success me-1" onclick="validar('${fila[0]}')">Validar</button>
+              <button class="btn btn-sm btn-danger" onclick="rechazar('${fila[0]}')">Devolver</button>
+            `;
+          } else {
+             botones = `<span class="text-muted">Procesado</span>`;
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="semaforo ${colorSemaforo}"></span> ${fila[8]}</td>
+            <td>${fila[1]}</td>
+            <td><strong>${fila[2]}</strong></td>
+            <td>${fila[3]}</td>
+            <td><span class="text-success">${fila[6]}</span> / <span class="text-danger">${fila[5]}</span></td>
+            <td>${fila[7]}</td>
+            <td>${botones}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay reportes pendientes.</td></tr>';
+      }
+    })
+    .catch(error => {
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error de conexión.</td></tr>';
+    });
+  }
+
+  function validar(idRegistro) {
+    Swal.fire({
+      title: '¿Validar Reporte?',
+      text: "Los datos pasarán al reporte final.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#198754',
+      confirmButtonText: 'Sí, Validar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        enviarDecision(idRegistro, 'Validado', 'Aprobado por CNC');
+      }
+    });
+  }
+
+  function rechazar(idRegistro) {
+    Swal.fire({
+      title: 'Devolver a la OPT',
+      input: 'textarea',
+      inputLabel: 'Motivo del rechazo:',
+      inputPlaceholder: 'Ej: El monto no coincide...',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      confirmButtonText: 'Enviar Devolución',
+      inputValidator: (value) => { if (!value) return 'Debe escribir un motivo.'; }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        enviarDecision(idRegistro, 'Devuelto', result.value);
+      }
+    });
+  }
+
+  function enviarDecision(id, decision, comentario) {
+    fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'procesarValidacion', id: id, decision: decision, comentario: comentario }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(response => response.json())
+    .then(resp => {
+      if (resp.exito) {
+        Swal.fire('Éxito', resp.mensaje, 'success');
+        cargarTabla(); // Recargar la tabla
+      } else {
+        Swal.fire('Error', resp.mensaje, 'error');
+      }
+    });
+  }
+</script>
+</body>
+</html>
