@@ -44,33 +44,43 @@
 </div>
 
 <script>
+  const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx7aDFr2lTIQcLgwyOqGODXQQFzsJhivdL02huOwvX4iC1zSsEGts75QL3rED3BcR3zhw/exec";
+
   function iniciarSesion(event) {
     event.preventDefault();
     const usuario = document.getElementById('tipoUsuario').value;
     const clave = document.getElementById('clave').value;
     const btn = document.getElementById('btnLogin');
+    const errorDiv = document.getElementById('mensajeError');
     
     btn.innerText = "Verificando...";
     btn.disabled = true;
+    errorDiv.innerText = "";
 
-    // SIMULACIÓN DE LOGIN (Luego lo conectaremos a Apps Script)
-    // Claves de prueba: Observatorio=1111, CNC=2222, OPT1=3333
-    setTimeout(() => {
-        if(clave === "1111" && usuario === "Observatorio") {
-            sessionStorage.setItem('usuarioLogueado', 'Observatorio');
-            window.location.href = 'observatorio.html';
-        } else if (clave === "2222" && usuario === "CNC") {
-            sessionStorage.setItem('usuarioLogueado', 'CNC');
-            window.location.href = 'cnc.html';
-        } else if (clave === "3333" && usuario === "OPT1") {
-            sessionStorage.setItem('usuarioLogueado', 'OPT1');
-            window.location.href = 'formulario.html';
-        } else {
-            document.getElementById('mensajeError').innerText = "Usuario o clave incorrectos.";
-            btn.innerText = "Ingresar";
-            btn.disabled = false;
-        }
-    }, 800);
+    fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'login', usuario: usuario, clave: clave }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(response => response.json())
+    .then(resp => {
+      if (resp.exito) {
+        sessionStorage.setItem('usuarioLogueado', resp.rol);
+        if (resp.rol === 'Observatorio') window.location.href = 'observatorio.html';
+        else if (resp.rol === 'CNC') window.location.href = 'cnc.html';
+        else window.location.href = 'formulario.html';
+      } else {
+        errorDiv.innerText = resp.mensaje;
+        btn.innerText = "Ingresar";
+        btn.disabled = false;
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      errorDiv.innerText = "Error de conexión. Verifique la URL del script.";
+      btn.innerText = "Ingresar";
+      btn.disabled = false;
+    });
   }
 </script>
 </body>
