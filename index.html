@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apostilla - Ingreso</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg, #0d1b5e 0%, #1e3a8a 100%); height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-card { width: 100%; max-width: 400px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .flag-bar { height: 5px; background: linear-gradient(to right, #FFCC00 33%, #0033A0 33%, #0033A0 66%, #EF3340 66%); border-radius: 20px 20px 0 0; }
+  </style>
+</head>
+<body>
+
+<div class="card login-card">
+  <div class="flag-bar"></div>
+  <div class="card-body p-4 text-center">
+    <h4 class="mb-3">🇻🇪 Servicio de Apostilla</h4>
+    
+    <form id="loginForm" onsubmit="iniciarSesion(event)">
+      <div class="mb-3 text-start">
+        <label class="form-label">Seleccione Usuario</label>
+        <select class="form-select" id="tipoUsuario" required>
+          <option value="" disabled selected>Elija una opción...</option>
+          <option value="Observatorio">Observatorio</option>
+          <option value="CNC">CNC (Validador)</option>
+          <option value="OPT1">OPT 1</option>
+          <option value="OPT2">OPT 2</option>
+          <option value="OPT3">OPT 3</option>
+        </select>
+      </div>
+      
+      <div class="mb-4 text-start">
+        <label class="form-label">Clave (4 dígitos)</label>
+        <input type="password" class="form-control" id="clave" maxlength="4" pattern="\d{4}" required placeholder="****">
+      </div>
+      
+      <button type="submit" class="btn btn-primary w-100" id="btnLogin">Ingresar</button>
+    </form>
+
+    <div id="mensajeError" class="text-danger mt-2 small"></div>
+  </div>
+</div>
+
+<script>
+  function iniciarSesion(event) {
+    event.preventDefault();
+    const usuario = document.getElementById('tipoUsuario').value;
+    const clave = document.getElementById('clave').value;
+    const btn = document.getElementById('btnLogin');
+    
+    btn.innerText = "Verificando...";
+    btn.disabled = true;
+
+    // SIMULACIÓN DE LOGIN (Luego lo conectaremos a Apps Script)
+    // Claves de prueba: Observatorio=1111, CNC=2222, OPT1=3333
+    setTimeout(() => {
+        if(clave === "1111" && usuario === "Observatorio") {
+            sessionStorage.setItem('usuarioLogueado', 'Observatorio');
+            window.location.href = 'observatorio.html';
+        } else if (clave === "2222" && usuario === "CNC") {
+            sessionStorage.setItem('usuarioLogueado', 'CNC');
+            window.location.href = 'cnc.html';
+        } else if (clave === "3333" && usuario === "OPT1") {
+            sessionStorage.setItem('usuarioLogueado', 'OPT1');
+            window.location.href = 'formulario.html';
+        } else {
+            document.getElementById('mensajeError').innerText = "Usuario o clave incorrectos.";
+            btn.innerText = "Ingresar";
+            btn.disabled = false;
+        }
+    }, 800);
+  }
+</script>
+</body>
+</html>
