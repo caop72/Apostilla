@@ -181,6 +181,126 @@
       else Swal.fire('Error', resp.mensaje, 'error');
     });
   }
+    // ==========================================
+  // ⚙️ ADMINISTRACIÓN DE CONFIGURACIÓN
+  // ==========================================
+  function abrirConfiguracion() {
+    Swal.fire({
+      title: 'Cargando configuración...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+    
+    fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtenerConfiguracion' }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (!resp.exito) {
+        Swal.fire('Error', resp.mensaje, 'error');
+        return;
+      }
+      mostrarModalConfiguracion(resp.config);
+    })
+    .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+  }
+
+  function mostrarModalConfiguracion(config) {
+    // Construimos el HTML del formulario dinámicamente
+    let htmlForm = '<div style="text-align:left; max-height: 60vh; overflow-y: auto; padding: 5px;">';
+    
+    config.forEach(item => {
+      const esCorreo = item.clave.includes('CORREO');
+      const esNumero = item.clave === 'TASA_CAMBIO' || item.clave === 'UMBRAL_RECHAZO';
+      const icono = esCorreo ? '📧' : (esNumero ? '🔢' : '📝');
+      
+      htmlForm += `
+        <div class="mb-3">
+          <label class="form-label small fw-bold mb-1">${icono} ${item.clave}</label>
+          <input 
+            type="${esNumero ? 'number' : 'text'}" 
+            step="${esNumero ? '0.01' : 'any'}"
+            class="form-control form-control-sm" 
+            id="cfg_${item.clave}" 
+            value="${item.valor}"
+          >
+          <small class="text-muted" style="font-size: 0.75rem;">${item.descripcion}</small>
+        </div>
+      `;
+    });
+    
+    htmlForm += '</div>';
+    htmlForm += '<p class="text-muted small mt-2 mb-0">💡 Para múltiples correos, sepáralos con coma: <code>correo1@x.com, correo2@x.com</code></p>';
+    
+    Swal.fire({
+      title: '⚙️ Configuración del Sistema',
+      html: htmlForm,
+      width: '600px',
+      showCancelButton: true,
+      confirmButtonText: '💾 Guardar cambios',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#0d1b5e',
+      preConfirm: () => {
+        // Recopilamos todos los valores
+        const cambios = [];
+        config.forEach(item => {
+          const nuevoValor = document.getElementById(`cfg_${item.clave}`).value.trim();
+          if (nuevoValor !== String(item.valor)) {
+            cambios.push({ clave: item.clave, valor: nuevoValor });
+          }
+        });
+        return cambios;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (result.value.length === 0) {
+          Swal.fire('Sin cambios', 'No modificaste ningún valor.', 'info');
+          return;
+        }
+        guardarConfiguracion(result.value);
+      }
+    });
+  }
+
+  function guardarConfiguracion(cambios) {
+    Swal.fire({
+      title: 'Guardando...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+    
+    // Enviamos los cambios uno por uno (secuencial) para detectar errores
+    let promesas = cambios.map(cambio => {
+      return fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        body: JSON.stringify({ 
+          accion: 'actualizarConfiguracion', 
+          clave: cambio.clave, 
+          valor: cambio.valor 
+        }),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      }).then(res => res.json());
+    });
+    
+    Promise.all(promesas)
+      .then(resultados => {
+        const errores = resultados.filter(r => !r.exito);
+        if (errores.length > 0) {
+          Swal.fire('Error parcial', errores.map(e => e.mensaje).join('<br>'), 'error');
+        } else {
+          Swal.fire({
+            title: '¡Guardado!',
+            html: `✅ <b>${cambios.length}</b> valor(es) actualizado(s) correctamente.`,
+            icon: 'success',
+            timer: 2500,
+            showConfirmButton: false
+          });
+        }
+      })
+      .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+  }
 </script>
 </body>
 </html>
