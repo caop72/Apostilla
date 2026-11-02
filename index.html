@@ -18,20 +18,20 @@
   <div class="card-body p-4 text-center">
     <h4 class="mb-3">🇻🇪 Servicio de Apostilla</h4>
     
-<form id="loginForm" onsubmit="iniciarSesion(event)">
-  <div class="mb-3 text-start">
-    <label class="form-label">Seleccione Usuario</label>
-    <select class="form-select" id="tipoUsuario" required>
-      <option value="" disabled selected>Elija una opción...</option>
-      <option value="Observatorio">Observatorio</option>
-      <option value="Observatorio1">Observatorio 1 (Auxiliar)</option>
-      <option value="CNC">CNC (Validador)</option>
-      <option value="OPT CUA">OPT CUA</option>
-      <option value="OPT CARMELITAS">OPT CARMELITAS</option>
-      <option value="OPT CHACAO">OPT CHACAO</option>
-      <option value="OPT GALERIAS">OPT GALERIAS</option>
-    </select>
-  </div>
+    <form id="loginForm" onsubmit="iniciarSesion(event)">
+      <div class="mb-3 text-start">
+        <label class="form-label">Seleccione Usuario</label>
+        <select class="form-select" id="tipoUsuario" required>
+          <option value="" disabled selected>Elija una opción...</option>
+          <option value="Observatorio">Observatorio</option>
+          <option value="Observatorio1">Observatorio 1 (Auxiliar)</option>
+          <option value="CNC">CNC (Validador)</option>
+          <option value="OPT CUA">OPT CUA</option>
+          <option value="OPT CARMELITAS">OPT CARMELITAS</option>
+          <option value="OPT CHACAO">OPT CHACAO</option>
+          <option value="OPT GALERIAS">OPT GALERIAS</option>
+        </select>
+      </div>
       
       <div class="mb-4 text-start">
         <label class="form-label">Clave (4 dígitos)</label>
@@ -67,13 +67,15 @@
     .then(response => response.json())
     .then(resp => {
       if (resp.exito) {
-        // Guardamos el nombre exacto del usuario en lugar del rol
-        sessionStorage.setItem('usuarioLogueado', usuario); 
+        // Guardamos el nombre real y el rol por separado
+        const usuarioLimpio = usuario.trim();
+        sessionStorage.setItem('usuario', usuarioLimpio); 
+        sessionStorage.setItem('rol', resp.rol); 
         
-        // 🚀 REDIRECCIÓN INTELIGENTE POR NOMBRE DE USUARIO
-        if (usuario === 'Observatorio' || usuario === 'Observatorio1') {
+        // Redirección estricta basada en el nombre exacto
+        if (usuarioLimpio === 'Observatorio' || usuarioLimpio === 'Observatorio1') {
           window.location.href = 'observatorio.html';
-        } else if (usuario === 'CNC') {
+        } else if (usuarioLimpio === 'CNC') {
           window.location.href = 'cnc.html';
         } else {
           window.location.href = 'formulario.html';
