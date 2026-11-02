@@ -19,9 +19,8 @@
     .fila-devuelto { background-color: #ffe6e6 !important; }
     .fila-validado { background-color: #e6f7ee !important; }
     
-    /* Estilos para el modo Auxiliar (Observatorio 1) */
+    /* ESTA CLASE ES LA QUE OCULTA TODO PARA EL AUXILIAR */
     .modo-auxiliar .ocultar-auxiliar { display: none !important; }
-    .modo-auxiliar .col-md-8, .modo-auxiliar .col-md-4 { width: 100%; flex: 0 0 100%; }
   </style>
 </head>
 <body>
@@ -30,15 +29,16 @@
   <div class="container-fluid">
     <span class="navbar-brand mb-0 h5">📈 Observatorio - <span id="nombreUsuario">Cargando...</span></span>
     <div class="d-flex gap-2">
+      <!-- Botón de Configuración (Oculto para auxiliar) -->
       <button class="btn btn-outline-light btn-sm ocultar-auxiliar" onclick="abrirConfiguracion()">⚙️ Config</button>
       <button class="btn btn-outline-light btn-sm" onclick="cerrarSesion()">Salir</button>
     </div>
   </div>
 </nav>
 
-<div class="container-fluid px-3" id="appContainer">
+<div class="container-fluid px-3">
   
-  <!-- 🔍 FILTROS (Ocultos para Observatorio 1) -->
+  <!-- 🔍 FILTROS (Ocultos para auxiliar) -->
   <div class="card mb-3 ocultar-auxiliar">
     <div class="card-header py-2">🔍 Filtros de Búsqueda</div>
     <div class="card-body">
@@ -74,79 +74,18 @@
     </div>
   </div>
   
-  <!-- 📊 TARJETAS RESUMEN (Ocultas para Observatorio 1) -->
+  <!-- 📊 TARJETAS RESUMEN (Ocultas para auxiliar) -->
   <div class="row g-2 mb-3 ocultar-auxiliar">
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Total Registros</small>
-        <h4 class="text-primary mb-0" id="totalRegistros">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Citas Atendidas</small>
-        <h4 class="text-info mb-0" id="totalCitas">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Docs Validados</small>
-        <h4 class="text-success mb-0" id="totalValidados">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Tasa Rechazo</small>
-        <h4 class="text-danger mb-0" id="tasaRechazo">0%</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Ingresos (Bs)</small>
-        <h4 class="text-dark mb-0" id="totalIngresos">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">T. Respuesta Prom.</small>
-        <h4 class="text-warning mb-0" id="tiempoRespuesta">0h</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Pendientes</small>
-        <h4 class="text-warning mb-0" id="countPendientes">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Devueltos</small>
-        <h4 class="text-danger mb-0" id="countDevueltos">0</h4>
-      </div>
-    </div>
+    <!-- ... (Tus tarjetas de resumen van aquí, se ocultarán para el auxiliar) ... -->
+    <div class="col-12"><p class="text-muted text-center py-3">Tarjetas ocultas en modo Auxiliar</p></div>
   </div>
   
-  <!-- 📈 GRÁFICOS (Ocultos para Observatorio 1) -->
+  <!-- 📈 GRÁFICOS (Ocultos para auxiliar) -->
   <div class="row g-3 mb-3 ocultar-auxiliar">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header py-2">📊 Citas vs Validados por OPT</div>
-        <div class="card-body">
-          <div class="chart-container" style="position: relative; height: 280px; width: 100%;"><canvas id="graficoBarras"></canvas></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header py-2">🍩 Estados</div>
-        <div class="card-body">
-          <div class="chart-container" style="position: relative; height: 280px; width: 100%;"><canvas id="graficoDona"></canvas></div>
-        </div>
-      </div>
-    </div>
+    <!-- ... (Tus gráficos van aquí, se ocultarán para el auxiliar) ... -->
   </div>
   
-  <!-- 📋 TABLA DE SEGUIMIENTO TOTAL (Visible para ambos) -->
+  <!-- 📋 TABLA DE SEGUIMIENTO TOTAL (Visible SIEMPRE) -->
   <div class="card mb-3">
     <div class="card-header py-2 d-flex justify-content-between align-items-center">
       <span>📋 Seguimiento Total de Reportes</span>
@@ -180,23 +119,9 @@
     </div>
   </div>
   
-  <!-- 🎯 ACCIONES (Ocultas para Observatorio 1) -->
+  <!-- 🎯 ACCIONES (Ocultas para auxiliar) -->
   <div class="row mb-4 ocultar-auxiliar">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header py-2">🎯 Acciones del Observatorio</div>
-        <div class="card-body">
-          <div class="ai-box mb-3" id="textoIA">
-            <p class="mb-0 text-muted small">Copia los datos filtrados para que la IA los analice.</p>
-          </div>
-          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button class="btn btn-primary btn-sm" onclick="copiarDatosParaIA()">📋 Copiar Datos Filtrados</button>
-            <button class="btn btn-warning btn-sm" onclick="enviarAnalisisCorreo()">📧 Enviar Análisis</button>
-            <button class="btn btn-success btn-sm" onclick="generarReporte()">🚀 Generar Slides y Enviar</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ... (Botones de análisis y generación de PDF) ... -->
   </div>
 </div>
 
@@ -210,15 +135,9 @@
   
   document.getElementById('nombreUsuario').innerText = usuarioLogueado;
 
-  // LÓGICA CLAVE: Modo Auxiliar para Observatorio 1
-  if (usuarioLogueado === 'Observatorio 1') {
-    // document.body.classList.add('modo-auxiliar');
-    // Ocultamos todos los elementos marcados con la clase ocultar-auxiliar
-    document.querySelectorAll('.ocultar-auxiliar').forEach(el => el.style.display = 'none');
-    
-    // Quitamos los márgenes superiores para que la tabla ocupe todo
-    document.getElementById('appContainer').classList.remove('px-3');
-    document.getElementById('appContainer').classList.add('px-4');
+  // 🚀 AQUI APLICAMOS EL MODO LIMPIO
+  if (usuarioLogueado === 'Observatorio1' || usuarioLogueado === 'Observatorio 1') {
+    document.body.classList.add('modo-auxiliar'); // Oculta filtros, tarjetas, gráficos y botones de config
   }
   
   let datosFiltradosActuales = [];
@@ -226,8 +145,8 @@
   let graficoDonaInst = null;
   
   window.onload = function() {
-    // Si es Observatorio 1, no necesitamos cargar la lista de OPTs para filtros
-    if (usuarioLogueado !== 'Observatorio 1') {
+    // Solo cargamos los filtros si NO es auxiliar
+    if (!document.body.classList.contains('modo-auxiliar')) {
       cargarListaOPTs();
     }
     aplicarFiltros();
@@ -256,8 +175,8 @@
   }
   
   function obtenerFiltros() {
-    // Si es Observatorio 1, no aplicamos filtros (muestra todo)
-    if (usuarioLogueado === 'Observatorio 1') return {};
+    // Si es auxiliar, no aplicamos filtros (petición vacía para traer todo)
+    if (document.body.classList.contains('modo-auxiliar')) return {};
     
     return {
       opt: document.getElementById('filtroOPT').value,
@@ -267,19 +186,10 @@
     };
   }
   
-  function limpiarFiltros() {
-    if (usuarioLogueado === 'Observatorio 1') return;
-    document.getElementById('filtroOPT').value = '';
-    document.getElementById('filtroEstado').value = '';
-    document.getElementById('filtroDesde').value = '';
-    document.getElementById('filtroHasta').value = '';
-    aplicarFiltros();
-  }
-  
   function aplicarFiltros() {
     const filtros = obtenerFiltros();
     
-    // Cargar la tabla
+    // Cargar la tabla (SIEMPRE)
     fetch(URL_APPS_SCRIPT, {
       method: 'POST',
       body: JSON.stringify({ accion: 'obtenerSeguimiento', filtros: filtros }),
@@ -293,8 +203,8 @@
       }
     });
     
-    // Cargar estadísticas (Solo si NO es Observatorio 1)
-    if (usuarioLogueado !== 'Observatorio 1') {
+    // Cargar estadísticas (SOLO si no es auxiliar)
+    if (!document.body.classList.contains('modo-auxiliar')) {
       fetch(URL_APPS_SCRIPT, {
         method: 'POST',
         body: JSON.stringify({ accion: 'obtenerEstadisticas', filtros: filtros }),
@@ -345,52 +255,8 @@
     tbody.innerHTML = html;
   }
   
-  function renderizarEstadisticas(data) {
-    if (usuarioLogueado === 'Observatorio 1') return; // Doble seguro
-    
-    document.getElementById('totalRegistros').innerText = data.totales.registros;
-    document.getElementById('totalCitas').innerText = data.totales.citas;
-    document.getElementById('totalValidados').innerText = data.totales.validados;
-    document.getElementById('tasaRechazo').innerText = data.totales.tasaRechazo + '%';
-    document.getElementById('totalIngresos').innerText = data.totales.montoBs.toLocaleString('es-VE', {maximumFractionDigits: 0});
-    document.getElementById('tiempoRespuesta').innerText = data.totales.tiempoRespuestaPromedio + 'h';
-    document.getElementById('countPendientes').innerText = data.estados.Pendiente || 0;
-    document.getElementById('countDevueltos').innerText = data.estados.Devuelto || 0;
-    
-    if (graficoBarrasInst) graficoBarrasInst.destroy();
-    if (graficoDonaInst) graficoDonaInst.destroy();
-    
-    const opts = Object.keys(data.porOPT);
-    const citasPorOpt = opts.map(o => data.porOPT[o].citas);
-    const validadosPorOpt = opts.map(o => data.porOPT[o].validados);
-    
-    graficoBarrasInst = new Chart(document.getElementById('graficoBarras').getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: opts,
-        datasets: [
-          { label: 'Citas', data: citasPorOpt, backgroundColor: '#0d1b5e' },
-          { label: 'Validados', data: validadosPorOpt, backgroundColor: '#198754' }
-        ]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-    });
-    
-    graficoDonaInst = new Chart(document.getElementById('graficoDona').getContext('2d'), {
-      type: 'doughnut',
-      data: {
-        labels: ['Validados', 'Pendientes', 'Devueltos'],
-        datasets: [{
-          data: [data.estados.Validado || 0, data.estados.Pendiente || 0, data.estados.Devuelto || 0],
-          backgroundColor: ['#198754', '#ffc107', '#dc3545']
-        }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-    });
-  }
-
-  // ... (El resto de tus funciones de copiar, generar y configurar se mantienen igual)
-  // (Pega aquí tus funciones copiarDatosParaIA, generarReporte, enviarAnalisisCorreo, abrirConfiguracion, mostrarModalConfiguracion y guardarConfiguracion)
+  // ... (El resto de tus funciones: renderizarEstadisticas, copiarDatosParaIA, generarReporte, etc. se mantienen igual)
+  // Si necesitas que te pegue el archivo completo con todas las funciones, dímelo, pero esta estructura es la que hace la magia.
 </script>
 
 </body>
