@@ -24,12 +24,12 @@
     <select class="form-select" id="tipoUsuario" required>
       <option value="" disabled selected>Elija una opción...</option>
       <option value="Observatorio">Observatorio</option>
-      <option value="Observatorio 1">Observatorio 1</option>
-      <option value="CNC">CNC </option>
-      <option value="OPT1">OPT CUA</option>
-      <option value="OPT2">OPT CARMELITAS</option>
-      <option value="OPT3">OPT CHACAO</option>
-      <option value="OPT4">OPT GALERIAS</option>
+      <option value="Observatorio1">Observatorio 1 (Auxiliar)</option>
+      <option value="CNC">CNC (Validador)</option>
+      <option value="OPT CUA">OPT CUA</option>
+      <option value="OPT CARMELITAS">OPT CARMELITAS</option>
+      <option value="OPT CHACAO">OPT CHACAO</option>
+      <option value="OPT GALERIAS">OPT GALERIAS</option>
     </select>
   </div>
       
@@ -67,10 +67,17 @@
     .then(response => response.json())
     .then(resp => {
       if (resp.exito) {
-        sessionStorage.setItem('usuarioLogueado', resp.rol);
-        if (resp.rol === 'Observatorio') window.location.href = 'observatorio.html';
-        else if (resp.rol === 'CNC') window.location.href = 'cnc.html';
-        else window.location.href = 'formulario.html';
+        // Guardamos el nombre exacto del usuario en lugar del rol
+        sessionStorage.setItem('usuarioLogueado', usuario); 
+        
+        // 🚀 REDIRECCIÓN INTELIGENTE POR NOMBRE DE USUARIO
+        if (usuario === 'Observatorio' || usuario === 'Observatorio1') {
+          window.location.href = 'observatorio.html';
+        } else if (usuario === 'CNC') {
+          window.location.href = 'cnc.html';
+        } else {
+          window.location.href = 'formulario.html';
+        }
       } else {
         errorDiv.innerText = resp.mensaje;
         btn.innerText = "Ingresar";
