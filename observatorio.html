@@ -345,38 +345,45 @@
     tbody.innerHTML = html;
   }
 
-  // ==========================================
-  // RENDERIZAR ESTADÍSTICAS
-  // ==========================================
-  function renderizarEstadisticas(data) {
+    function renderizarEstadisticas(data) {
     document.getElementById('totalRegistros').innerText = data.totales.registros;
     document.getElementById('totalCitas').innerText = data.totales.citas;
     document.getElementById('totalValidados').innerText = data.totales.validados;
     document.getElementById('tasaRechazo').innerText = data.totales.tasaRechazo + '%';
-    document.getElementById('totalIngresos').innerText = (data.totales.montoBs || 0).toLocaleString('es-VE', {maximumFractionDigits: 0});
-    document.getElementById('tiempoRespuesta').innerText = (data.totales.tiempoRespuestaPromedio || 0) + 'h';
+    document.getElementById('totalIngresos').innerText = data.totales.montoBs.toLocaleString('es-VE', {maximumFractionDigits: 0});
+    document.getElementById('tiempoRespuesta').innerText = data.totales.tiempoRespuestaPromedio + 'h';
     document.getElementById('countPendientes').innerText = data.estados.Pendiente || 0;
     document.getElementById('countDevueltos').innerText = data.estados.Devuelto || 0;
-
+    
     if (graficoBarrasInst) graficoBarrasInst.destroy();
     if (graficoDonaInst) graficoDonaInst.destroy();
-
+    
     const opts = Object.keys(data.porOPT);
     const citasPorOpt = opts.map(o => data.porOPT[o].citas);
     const validadosPorOpt = opts.map(o => data.porOPT[o].validados);
-
+    
+    // Gráfico de barras con ajuste dinámico de ancho
     graficoBarrasInst = new Chart(document.getElementById('graficoBarras').getContext('2d'), {
       type: 'bar',
       data: {
         labels: opts,
         datasets: [
-          { label: 'Citas', data: citasPorOpt, backgroundColor: '#0d1b5e' },
-          { label: 'Validados', data: validadosPorOpt, backgroundColor: '#198754' }
+          { label: 'Citas', data: citasPorOpt, backgroundColor: '#0d1b5e', barPercentage: 0.6 },
+          { label: 'Validados', data: validadosPorOpt, backgroundColor: '#198754', barPercentage: 0.6 }
         ]
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { 
+          legend: { position: 'bottom' } 
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
     });
-
+    
     graficoDonaInst = new Chart(document.getElementById('graficoDona').getContext('2d'), {
       type: 'doughnut',
       data: {
@@ -389,7 +396,6 @@
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
   }
-
   // ==========================================
   // COPIAR DATOS PARA IA
   // ==========================================
