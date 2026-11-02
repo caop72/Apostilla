@@ -74,10 +74,18 @@
   
   window.onload = function() {
     const usuario = sessionStorage.getItem('usuarioLogueado');
-    if (!usuario || usuario === 'CNC' || usuario === 'Observatorio') {
+    
+    // 🚨 AQUÍ AGREGAMOS A 'Observatorio1' PARA QUE LO EXPULSE
+    if (!usuario || usuario === 'CNC' || usuario === 'Observatorio' || usuario === 'Observatorio1') {
       window.location.href = 'index.html';
     } else {
-      const nombres = { 'OPT1': 'OPT 1 - Caracas', 'OPT2': 'OPT 2 - Miranda', 'OPT3': 'OPT 3 - Zulia' };
+      // Nombres oficiales para las OPTs
+      const nombres = { 
+        'OPT CUA': 'OPT CUA', 
+        'OPT CARMELITAS': 'OPT CARMELITAS', 
+        'OPT CHACAO': 'OPT CHACAO', 
+        'OPT GALERIAS': 'OPT GALERIAS' 
+      };
       const nombre = nombres[usuario] || usuario;
       document.getElementById('nombreOPT').innerText = "Reportando como: " + nombre;
       document.getElementById('inputNombreOPT').value = nombre;
