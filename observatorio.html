@@ -12,6 +12,9 @@
     .navbar { background-color: #0d1b5e; }
     .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: none; margin-bottom: 15px;}
     .card-header { background-color: #fff; border-bottom: 2px solid #0d1b5e; font-weight: bold; color: #0d1b5e; }
+    .ai-box { background: #eef2ff; border-left: 5px solid #4f46e5; padding: 15px; border-radius: 10px; }
+    .chart-container { position: relative; height: 50vw; max-height: 280px; width: 100%; }
+    
     .tabla-seguimiento { font-size: 0.85rem; }
     .tabla-seguimiento th { position: sticky; top: 0; background: #f1f3f5; z-index: 1; }
     .badge-estado { font-size: 0.75rem; padding: 4px 8px; }
@@ -19,7 +22,6 @@
     .fila-devuelto { background-color: #ffe6e6 !important; }
     .fila-validado { background-color: #e6f7ee !important; }
     
-    /* ESTA CLASE ES LA QUE OCULTA TODO PARA EL AUXILIAR */
     .modo-auxiliar .ocultar-auxiliar { display: none !important; }
   </style>
 </head>
@@ -29,7 +31,6 @@
   <div class="container-fluid">
     <span class="navbar-brand mb-0 h5">📈 Observatorio - <span id="nombreUsuario">Cargando...</span></span>
     <div class="d-flex gap-2">
-      <!-- Botón de Configuración (Oculto para auxiliar) -->
       <button class="btn btn-outline-light btn-sm ocultar-auxiliar" onclick="abrirConfiguracion()">⚙️ Config</button>
       <button class="btn btn-outline-light btn-sm" onclick="cerrarSesion()">Salir</button>
     </div>
@@ -38,7 +39,6 @@
 
 <div class="container-fluid px-3">
   
-  <!-- 🔍 FILTROS (Ocultos para auxiliar) -->
   <div class="card mb-3 ocultar-auxiliar">
     <div class="card-header py-2">🔍 Filtros de Búsqueda</div>
     <div class="card-body">
@@ -74,18 +74,76 @@
     </div>
   </div>
   
-  <!-- 📊 TARJETAS RESUMEN (Ocultas para auxiliar) -->
   <div class="row g-2 mb-3 ocultar-auxiliar">
-    <!-- ... (Tus tarjetas de resumen van aquí, se ocultarán para el auxiliar) ... -->
-    <div class="col-12"><p class="text-muted text-center py-3">Tarjetas ocultas en modo Auxiliar</p></div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Total Registros</small>
+        <h4 class="text-primary mb-0" id="totalRegistros">0</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Citas Atendidas</small>
+        <h4 class="text-info mb-0" id="totalCitas">0</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Docs Validados</small>
+        <h4 class="text-success mb-0" id="totalValidados">0</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Tasa Rechazo</small>
+        <h4 class="text-danger mb-0" id="tasaRechazo">0%</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Ingresos (Bs)</small>
+        <h4 class="text-dark mb-0" id="totalIngresos">0</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">T. Respuesta Prom.</small>
+        <h4 class="text-warning mb-0" id="tiempoRespuesta">0h</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Pendientes</small>
+        <h4 class="text-warning mb-0" id="countPendientes">0</h4>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Devueltos</small>
+        <h4 class="text-danger mb-0" id="countDevueltos">0</h4>
+      </div>
+    </div>
   </div>
   
-  <!-- 📈 GRÁFICOS (Ocultos para auxiliar) -->
   <div class="row g-3 mb-3 ocultar-auxiliar">
-    <!-- ... (Tus gráficos van aquí, se ocultarán para el auxiliar) ... -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header py-2">📊 Citas vs Validados por OPT</div>
+        <div class="card-body">
+          <div class="chart-container"><canvas id="graficoBarras"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header py-2">🍩 Estados</div>
+        <div class="card-body">
+          <div class="chart-container"><canvas id="graficoDona"></canvas></div>
+        </div>
+      </div>
+    </div>
   </div>
   
-  <!-- 📋 TABLA DE SEGUIMIENTO TOTAL (Visible SIEMPRE) -->
   <div class="card mb-3">
     <div class="card-header py-2 d-flex justify-content-between align-items-center">
       <span>📋 Seguimiento Total de Reportes</span>
@@ -119,38 +177,52 @@
     </div>
   </div>
   
-  <!-- 🎯 ACCIONES (Ocultas para auxiliar) -->
   <div class="row mb-4 ocultar-auxiliar">
-    <!-- ... (Botones de análisis y generación de PDF) ... -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header py-2">🎯 Acciones del Observatorio</div>
+        <div class="card-body">
+          <div class="ai-box mb-3" id="textoIA">
+            <p class="mb-0 text-muted small">Copia los datos filtrados para que la IA los analice.</p>
+          </div>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-primary btn-sm" onclick="copiarDatosParaIA()">📋 Copiar Datos Filtrados</button>
+            <button class="btn btn-warning btn-sm" onclick="enviarAnalisisCorreo()">📧 Enviar Análisis</button>
+            <button class="btn btn-success btn-sm" onclick="generarReporte()">🚀 Generar Slides y Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
   const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx7aDFr2lTIQcLgwyOqGODXQQFzsJhivdL02huOwvX4iC1zSsEGts75QL3rED3BcR3zhw/exec";
   
-  const usuarioLogueado = sessionStorage.getItem('usuarioLogueado');
-  if (!usuarioLogueado || !usuarioLogueado.includes('Observatorio')) {
-    window.location.href = 'index.html';
-  }
-  
-  document.getElementById('nombreUsuario').innerText = usuarioLogueado;
-
-  // 🚀 AQUI APLICAMOS EL MODO LIMPIO
-if (usuarioLogueado === 'Observatorio1')
-    document.body.classList.add('modo-auxiliar'); // Oculta filtros, tarjetas, gráficos y botones de config
-  }
-  
   let datosFiltradosActuales = [];
   let graficoBarrasInst = null;
   let graficoDonaInst = null;
-  
-  window.onload = function() {
-    // Solo cargamos los filtros si NO es auxiliar
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const usuarioLogueado = (sessionStorage.getItem('usuario') || '').trim();
+    
+    if (!usuarioLogueado) {
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    document.getElementById('nombreUsuario').innerText = usuarioLogueado;
+
+    // MODO LIMPIO PARA AUXILIAR
+    if (usuarioLogueado === 'Observatorio1') {
+      document.body.classList.add('modo-auxiliar'); 
+    }
+    
     if (!document.body.classList.contains('modo-auxiliar')) {
       cargarListaOPTs();
     }
     aplicarFiltros();
-  };
+  });
   
   function cerrarSesion() { sessionStorage.clear(); window.location.href = 'index.html'; }
   
@@ -175,9 +247,7 @@ if (usuarioLogueado === 'Observatorio1')
   }
   
   function obtenerFiltros() {
-    // Si es auxiliar, no aplicamos filtros (petición vacía para traer todo)
     if (document.body.classList.contains('modo-auxiliar')) return {};
-    
     return {
       opt: document.getElementById('filtroOPT').value,
       estado: document.getElementById('filtroEstado').value,
@@ -186,10 +256,18 @@ if (usuarioLogueado === 'Observatorio1')
     };
   }
   
+  function limpiarFiltros() {
+    if (document.body.classList.contains('modo-auxiliar')) return;
+    document.getElementById('filtroOPT').value = '';
+    document.getElementById('filtroEstado').value = '';
+    document.getElementById('filtroDesde').value = '';
+    document.getElementById('filtroHasta').value = '';
+    aplicarFiltros();
+  }
+  
   function aplicarFiltros() {
     const filtros = obtenerFiltros();
     
-    // Cargar la tabla (SIEMPRE)
     fetch(URL_APPS_SCRIPT, {
       method: 'POST',
       body: JSON.stringify({ accion: 'obtenerSeguimiento', filtros: filtros }),
@@ -203,7 +281,6 @@ if (usuarioLogueado === 'Observatorio1')
       }
     });
     
-    // Cargar estadísticas (SOLO si no es auxiliar)
     if (!document.body.classList.contains('modo-auxiliar')) {
       fetch(URL_APPS_SCRIPT, {
         method: 'POST',
@@ -255,8 +332,220 @@ if (usuarioLogueado === 'Observatorio1')
     tbody.innerHTML = html;
   }
   
-  // ... (El resto de tus funciones: renderizarEstadisticas, copiarDatosParaIA, generarReporte, etc. se mantienen igual)
-  // Si necesitas que te pegue el archivo completo con todas las funciones, dímelo, pero esta estructura es la que hace la magia.
+  function renderizarEstadisticas(data) {
+    if (document.body.classList.contains('modo-auxiliar')) return;
+    
+    document.getElementById('totalRegistros').innerText = data.totales.registros;
+    document.getElementById('totalCitas').innerText = data.totales.citas;
+    document.getElementById('totalValidados').innerText = data.totales.validados;
+    document.getElementById('tasaRechazo').innerText = data.totales.tasaRechazo + '%';
+    document.getElementById('totalIngresos').innerText = data.totales.montoBs.toLocaleString('es-VE', {maximumFractionDigits: 0});
+    document.getElementById('tiempoRespuesta').innerText = data.totales.tiempoRespuestaPromedio + 'h';
+    document.getElementById('countPendientes').innerText = data.estados.Pendiente || 0;
+    document.getElementById('countDevueltos').innerText = data.estados.Devuelto || 0;
+    
+    if (graficoBarrasInst) graficoBarrasInst.destroy();
+    if (graficoDonaInst) graficoDonaInst.destroy();
+    
+    const opts = Object.keys(data.porOPT);
+    const citasPorOpt = opts.map(o => data.porOPT[o].citas);
+    const validadosPorOpt = opts.map(o => data.porOPT[o].validados);
+    
+    graficoBarrasInst = new Chart(document.getElementById('graficoBarras').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: opts,
+        datasets: [
+          { label: 'Citas', data: citasPorOpt, backgroundColor: '#0d1b5e' },
+          { label: 'Validados', data: validadosPorOpt, backgroundColor: '#198754' }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+    
+    graficoDonaInst = new Chart(document.getElementById('graficoDona').getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Validados', 'Pendientes', 'Devueltos'],
+        datasets: [{
+          data: [data.estados.Validado || 0, data.estados.Pendiente || 0, data.estados.Devuelto || 0],
+          backgroundColor: ['#198754', '#ffc107', '#dc3545']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+  
+  function copiarDatosParaIA() {
+    if (datosFiltradosActuales.length === 0) return Swal.fire('Sin datos', 'No hay registros para copiar.', 'info');
+    
+    let texto = "DATOS FILTRADOS APOSTILLA:\n";
+    texto += "ID | Fecha Envío | OPT | Citas | Docs | Validados | Rechazados | Monto Bs | Estado | Validado Por | Fecha Validación | T. Respuesta\n";
+    texto += "──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+    
+    datosFiltradosActuales.forEach(r => {
+      texto += `${r.id} | ${r.fechaEnvio} | ${r.opt} | ${r.citas} | ${r.docs} | ${r.validados} | ${r.rechazados} | ${r.montoBs} | ${r.estado} | ${r.validadoPor || '-'} | ${r.fechaValidacion || '-'} | ${r.tiempoRespuestaHoras || '-'}h\n`;
+    });
+    
+    navigator.clipboard.writeText(texto).then(() => {
+      document.getElementById('textoIA').innerHTML = `<h6 class="text-success mb-1">✅ ¡${datosFiltradosActuales.length} registros copiados!</h6><p class="mb-0 small">Pégalos en el chat de la IA y pide un análisis ejecutivo.</p>`;
+      Swal.fire('¡Copiado!', `${datosFiltradosActuales.length} registros en el portapapeles.`, 'success');
+    });
+  }
+  
+  function generarReporte() {
+    Swal.fire({
+      title: '¿Generar Reporte Slides?',
+      text: 'Se generará el PPT/PDF con los datos VALIDADOS de HOY y se enviará por correo.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#198754',
+      confirmButtonText: 'Sí, generar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({ title: 'Generando...', text: 'Espere unos segundos.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          body: JSON.stringify({ accion: 'generarReporte' }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(resp => {
+          if (resp.exito) Swal.fire('¡Éxito!', resp.mensaje, 'success');
+          else Swal.fire('Sin datos', resp.mensaje, 'info');
+        })
+        .catch(() => Swal.fire('Error', 'No se pudo conectar.', 'error'));
+      }
+    });
+  }
+  
+  function enviarAnalisisCorreo() {
+    Swal.fire({
+      title: '📧 Enviar Análisis',
+      html: `<p class="small mb-2">Pega el análisis de la IA o déjalo vacío para enviar el resumen automático:</p>
+             <textarea id="textoAnalisis" class="form-control" rows="6" placeholder="Pega el análisis aquí..."></textarea>`,
+      showCancelButton: true,
+      confirmButtonText: 'Enviar',
+      confirmButtonColor: '#f59e0b',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => document.getElementById('textoAnalisis').value
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const texto = result.value.trim();
+        const accion = texto === '' ? 'enviarAnalisisObservatorio' : 'enviarAnalisisPersonalizado';
+        const payload = texto === '' ? { accion: accion } : { accion: accion, texto: texto };
+        Swal.fire({ title: 'Enviando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(resp => {
+          if (resp.exito) Swal.fire('¡Enviado!', resp.mensaje, 'success');
+          else Swal.fire('Error', resp.mensaje, 'error');
+        })
+        .catch(() => Swal.fire('Error', 'No se pudo conectar.', 'error'));
+      }
+    });
+  }
+
+  function abrirConfiguracion() {
+    Swal.fire({
+      title: 'Cargando configuración...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+    
+    fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'obtenerConfiguracion' }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (!resp.exito) return Swal.fire('Error', resp.mensaje, 'error');
+      mostrarModalConfiguracion(resp.config);
+    })
+    .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+  }
+
+  function mostrarModalConfiguracion(config) {
+    let htmlForm = '<div style="text-align:left; max-height: 60vh; overflow-y: auto; padding: 5px;">';
+    
+    config.forEach(item => {
+      const esCorreo = item.clave.includes('CORREO');
+      const esNumero = item.clave === 'TASA_CAMBIO' || item.clave === 'UMBRAL_RECHAZO';
+      const icono = esCorreo ? '📧' : (esNumero ? '🔢' : '📝');
+      
+      htmlForm += `
+        <div class="mb-3">
+          <label class="form-label small fw-bold mb-1">${icono} ${item.clave}</label>
+          <input 
+            type="${esNumero ? 'number' : 'text'}" 
+            step="${esNumero ? '0.01' : 'any'}"
+            class="form-control form-control-sm" 
+            id="cfg_${item.clave}" 
+            value="${item.valor}"
+          >
+          <small class="text-muted" style="font-size: 0.75rem;">${item.descripcion}</small>
+        </div>
+      `;
+    });
+    
+    htmlForm += '</div>';
+    htmlForm += '<p class="text-muted small mt-2 mb-0">💡 Para múltiples correos, sepáralos con coma: <code>correo1@x.com, correo2@x.com</code></p>';
+    
+    Swal.fire({
+      title: '⚙️ Configuración del Sistema',
+      html: htmlForm,
+      width: '600px',
+      showCancelButton: true,
+      confirmButtonText: '💾 Guardar cambios',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#0d1b5e',
+      preConfirm: () => {
+        const cambios = [];
+        config.forEach(item => {
+          const nuevoValor = document.getElementById(`cfg_${item.clave}`).value.trim();
+          if (nuevoValor !== String(item.valor)) {
+            cambios.push({ clave: item.clave, valor: nuevoValor });
+          }
+        });
+        return cambios;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (result.value.length === 0) return Swal.fire('Sin cambios', 'No modificaste ningún valor.', 'info');
+        guardarConfiguracion(result.value);
+      }
+    });
+  }
+
+  function guardarConfiguracion(cambios) {
+    Swal.fire({
+      title: 'Guardando...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+    
+    let promesas = cambios.map(cambio => {
+      return fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        body: JSON.stringify({ accion: 'actualizarConfiguracion', clave: cambio.clave, valor: cambio.valor }),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      }).then(res => res.json());
+    });
+    
+    Promise.all(promesas)
+      .then(resultados => {
+        const errores = resultados.filter(r => !r.exito);
+        if (errores.length > 0) Swal.fire('Error parcial', errores.map(e => e.mensaje).join('<br>'), 'error');
+        else Swal.fire({ title: '¡Guardado!', html: `✅ <b>${cambios.length}</b> valor(es) actualizado(s).`, icon: 'success', timer: 2500, showConfirmButton: false });
+      })
+      .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+  }
 </script>
 
 </body>
