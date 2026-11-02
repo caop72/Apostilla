@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apostilla - Ingreso</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body { background: linear-gradient(135deg, #0d1b5e 0%, #1e3a8a 100%); height: 100vh; display: flex; align-items: center; justify-content: center; }
     .login-card { width: 100%; max-width: 400px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
@@ -34,7 +35,7 @@
       </div>
       
       <div class="mb-4 text-start">
-        <label class="form-label">Clave (4 dígitos)</label>
+        <label class="form-label">Clave</label>
         <input type="password" class="form-control" id="clave" maxlength="4" pattern="\d{4}" required placeholder="****">
       </div>
       
@@ -67,18 +68,44 @@
     .then(response => response.json())
     .then(resp => {
       if (resp.exito) {
-        // Guardamos el nombre real y el rol por separado
-        const usuarioLimpio = usuario.trim();
-        sessionStorage.setItem('usuario', usuarioLimpio); 
-        sessionStorage.setItem('rol', resp.rol); 
-        
-        // Redirección estricta basada en el nombre exacto
-        if (usuarioLimpio === 'Observatorio' || usuarioLimpio === 'Observatorio1') {
-          window.location.href = 'observatorio.html';
-        } else if (usuarioLimpio === 'CNC') {
-          window.location.href = 'cnc.html';
+        // 🔥 AQUÍ SE DISPARA LA VENTANA DE CAMBIO
+        if (resp.requiereCambio) {
+          Swal.fire({
+            title: '🔐 Cambio Obligatorio',
+            text: 'Por seguridad, debes cambiar tu clave inicial (1234) por una de tu preferencia.',
+            input: 'password',
+            inputLabel: 'Nueva Clave (4 dígitos)',
+            inputAttributes: { maxlength: 4, pattern: '\\d{4}', inputmode: 'numeric' },
+            inputValidator: (value) => {
+              if (!value || value.length !== 4 || !/^\d+$/.test(value)) return 'Debe ser de 4 dígitos numéricos.';
+              if (value === '1234') return 'No puedes usar la misma clave inicial.';
+            },
+            allowOutsideClick: false,
+            confirmButtonText: 'Guardar y Entrar',
+            confirmButtonColor: '#0d1b5e'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Guardamos la nueva clave
+              fetch(URL_APPS_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ accion: 'actualizarClave', usuario: usuario, nuevaClave: result.value }),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+              })
+              .then(res => res.json())
+              .then(resp2 => {
+                if (resp2.exito) {
+                  Swal.fire('¡Listo!', 'Clave actualizada. Entrando...', 'success').then(() => {
+                    redirigir(resp.rol, usuario);
+                  });
+                } else {
+                  Swal.fire('Error', resp2.mensaje, 'error');
+                  btn.innerText = "Ingresar"; btn.disabled = false;
+                }
+              });
+            }
+          });
         } else {
-          window.location.href = 'formulario.html';
+          redirigir(resp.rol, usuario);
         }
       } else {
         errorDiv.innerText = resp.mensaje;
@@ -92,6 +119,20 @@
       btn.innerText = "Ingresar";
       btn.disabled = false;
     });
+  }
+
+  function redirigir(rol, usuario) {
+    const usuarioLimpio = usuario.trim();
+    sessionStorage.setItem('usuario', usuarioLimpio); 
+    sessionStorage.setItem('rol', rol); 
+    
+    if (usuarioLimpio === 'Observatorio' || usuarioLimpio === 'Observatorio1') {
+      window.location.href = 'observatorio.html';
+    } else if (usuarioLimpio === 'CNC') {
+      window.location.href = 'cnc.html';
+    } else {
+      window.location.href = 'formulario.html';
+    }
   }
 </script>
 </body>
