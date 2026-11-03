@@ -190,12 +190,14 @@
               <label class="form-label small fw-bold mb-1">Hasta</label>
               <input type="date" class="form-control form-control-sm" id="reporteHasta">
             </div>
+            <!-- BOTONES ADAPTADOS: Diario, Mensual y Ejecutivo -->
             <div class="col-12 col-md-6 d-flex flex-column flex-md-row justify-content-md-end gap-2 mt-3 mt-md-0">
-  <button class="btn btn-success btn-sm w-100 w-md-auto" onclick="generarReporte()">🚀 Generar Slides y Enviar</button>
-  <button class="btn btn-primary btn-sm w-100 w-md-auto" onclick="enviarInformeEjecutivo()">📧 Enviar Informe Ejecutivo</button>
-</div>
+              <button class="btn btn-success btn-sm w-100 w-md-auto" onclick="generarReporte()">🚀 Generar Diario</button>
+              <button class="btn btn-info text-white btn-sm w-100 w-md-auto" onclick="generarReporteMensual()">📅 Generar Mensual</button>
+              <button class="btn btn-primary btn-sm w-100 w-md-auto" onclick="enviarInformeEjecutivo()">📧 Informe Ejecutivo</button>
+            </div>
           </div>
-          <small class="text-muted d-block mt-2">💡 Por defecto, el sistema toma el día de hoy. Selecciona un rango si deseas un lapso diferente.</small>
+          <small class="text-muted d-block mt-2">💡 El diario toma el día de hoy. El mensual consolida el mes en curso. El ejecutivo envía el análisis por correo.</small>
         </div>
       </div>
     </div>
@@ -379,10 +381,10 @@
     });
   }
 
-  // 🚀 BOTÓN PDF — SE QUEDA INTACTO
+  // 🚀 BOTÓN REPORTE DIARIO
   function generarReporte() {
     Swal.fire({
-      title: '¿Generar Reporte Slides?',
+      title: '¿Generar Reporte Diario?',
       text: 'Se generará el PPT/PDF con los datos VALIDADOS de HOY y se enviará por correo.',
       icon: 'question',
       showCancelButton: true,
@@ -407,42 +409,67 @@
     });
   }
 
-  // 📧 ENVIAR INFORME EJECUTIVO AL OBSERVATORIO
-function enviarInformeEjecutivo() {
-  Swal.fire({
-    title: '¿Enviar Informe Ejecutivo?',
-    text: 'Se enviará el análisis ejecutivo completo al correo del Observatorio configurado.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#0d1b5e',
-    confirmButtonText: 'Sí, enviar',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Enviando...',
-        text: 'Generando análisis y enviando correo.',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
+  // 📅 BOTÓN REPORTE MENSUAL (NUEVO)
+  function generarReporteMensual() {
+    Swal.fire({
+      title: '¿Generar Reporte Mensual?',
+      text: 'Se consolidarán los datos del mes en curso y se enviará el PDF con el formato mensual.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#0dcaf0',
+      confirmButtonText: 'Sí, generar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({ title: 'Generando...', text: 'Consolidando datos del mes...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          body: JSON.stringify({ accion: 'generarReporteMensual' }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(resp => {
+          if (resp.exito) Swal.fire('¡Éxito!', resp.mensaje, 'success');
+          else Swal.fire('Atención', resp.mensaje, 'warning');
+        })
+        .catch(() => Swal.fire('Error', 'No se pudo conectar.', 'error'));
+      }
+    });
+  }
 
-      fetch(URL_APPS_SCRIPT, {
-        method: 'POST',
-        body: JSON.stringify({ accion: 'enviarAnalisisObservatorio' }),
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-      })
-      .then(res => res.json())
-      .then(resp => {
-        if (resp.exito) {
-          Swal.fire('¡Éxito!', resp.mensaje, 'success');
-        } else {
-          Swal.fire('No se pudo enviar', resp.mensaje, 'warning');
-        }
-      })
-      .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
-    }
-  });
-}
+  // 📧 BOTÓN INFORME EJECUTIVO
+  function enviarInformeEjecutivo() {
+    Swal.fire({
+      title: '¿Enviar Informe Ejecutivo?',
+      text: 'Se enviará el análisis ejecutivo completo al correo del Observatorio configurado.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#0d1b5e',
+      confirmButtonText: 'Sí, enviar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Enviando...',
+          text: 'Generando análisis y enviando correo.',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+
+        fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          body: JSON.stringify({ accion: 'enviarAnalisisObservatorio' }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(resp => {
+          if (resp.exito) Swal.fire('¡Éxito!', resp.mensaje, 'success');
+          else Swal.fire('No se pudo enviar', resp.mensaje, 'warning');
+        })
+        .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+      }
+    });
+  }
   
   function abrirConfiguracion() {
     Swal.fire({
