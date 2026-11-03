@@ -151,11 +151,12 @@ function SEGURIDAD_CAOP_olvideClave(event) {
 }
 
 function SEGURIDAD_CAOP_redirigir(rol, usuario, correo) {
-  sessionStorage.setItem('usuario', usuario.trim());
+  const u = usuario.trim();
+  sessionStorage.setItem('usuario', u);
+  sessionStorage.setItem('usuarioLogueado', u);
   sessionStorage.setItem('rol', rol.trim());
   sessionStorage.setItem('correo', correo.trim());
 
-  const u = usuario.trim();
   if (u === 'Observatorio' || u === 'Observatorio1') window.location.href = 'observatorio.html';
   else if (u.startsWith('CNC')) window.location.href = 'cnc.html';
   else window.location.href = 'formulario.html';
