@@ -350,7 +350,7 @@
     if (graficoBarrasInst) graficoBarrasInst.destroy();
     if (graficoDonaInst) graficoDonaInst.destroy();
 
-    const opts = Object.keys(data.porOPT);
+    const opts = ['OPT CUA', 'OPT CARMELITAS', 'OPT CHACAO', 'OPT GALERIAS'].filter(o => data.porOPT[o]);
     const citasPorOpt = opts.map(o => data.porOPT[o].citas);
     const validadosPorOpt = opts.map(o => data.porOPT[o].validados);
 
