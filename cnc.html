@@ -62,7 +62,8 @@
 <script>
   const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx7aDFr2lTIQcLgwyOqGODXQQFzsJhivdL02huOwvX4iC1zSsEGts75QL3rED3BcR3zhw/exec";
   
-  if (sessionStorage.getItem('usuarioLogueado') !== 'CNC') window.location.href = 'index.html';
+  const _u = (sessionStorage.getItem('usuario') || '').trim();
+if (!_u.startsWith('CNC')) window.location.href = 'index.html';
 
   function cerrarSesion() { sessionStorage.clear(); window.location.href = 'index.html'; }
   window.onload = function() { cargarTabla(); }
