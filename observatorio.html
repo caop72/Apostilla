@@ -407,6 +407,43 @@
     });
   }
 
+  // 📧 ENVIAR INFORME EJECUTIVO AL OBSERVATORIO
+function enviarInformeEjecutivo() {
+  Swal.fire({
+    title: '¿Enviar Informe Ejecutivo?',
+    text: 'Se enviará el análisis ejecutivo completo al correo del Observatorio configurado.',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#0d1b5e',
+    confirmButtonText: 'Sí, enviar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Enviando...',
+        text: 'Generando análisis y enviando correo.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        body: JSON.stringify({ accion: 'enviarAnalisisObservatorio' }),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      })
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.exito) {
+          Swal.fire('¡Éxito!', resp.mensaje, 'success');
+        } else {
+          Swal.fire('No se pudo enviar', resp.mensaje, 'warning');
+        }
+      })
+      .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+    }
+  });
+}
+  
   function abrirConfiguracion() {
     Swal.fire({
       title: 'Cargando configuración...',
