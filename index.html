@@ -265,10 +265,10 @@ function verificarPerfil() {
   const grupoCorreo = document.getElementById('grupoCorreo');
   const inputCorreo = document.getElementById('correo');
 
-  if (usuario === 'Presidencia' || usuario === 'Despacho') {
+  if (usuario === 'Presidencia' || usuario === 'Despacho' || usuario === 'Observatorio') {
     grupoCorreo.style.display = 'none';
     inputCorreo.required = false;
-    inputCorreo.value = usuario.toLowerCase() + '@sistema.local'; // Correo ficticio
+    inputCorreo.value = 'sin_correo@sistema.local'; 
   } else {
     grupoCorreo.style.display = 'block';
     inputCorreo.required = true;
