@@ -221,8 +221,11 @@
     document.getElementById('nombreUsuario').innerText = usuarioLogueado;
 
     // MODO LIMPIO PARA AUXILIAR
+    // MODO PARA OBSERVATORIO 1 (Auxiliar)
     if (usuarioLogueado === 'Observatorio1') {
-      document.body.classList.add('modo-auxiliar');
+      // Ocultamos las tarjetas de números y los gráficos
+      document.querySelectorAll('.card.p-2.text-center').forEach(el => el.classList.add('ocultar-estadisticas'));
+      document.querySelectorAll('.row.g-3.mb-3').forEach(el => el.classList.add('ocultar-estadisticas'));
     }
 
     if (!document.body.classList.contains('modo-auxiliar')) {
