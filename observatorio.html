@@ -45,7 +45,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- NOVEDADES EJECUTIVAS (SOLO PARA DESPACHO/PRESIDENCIA) -->
   <div class="card mb-3 d-none" id="panelNovedades" style="background: linear-gradient(135deg, #0d1b5e 0%, #1e3a8a 100%); color: white;">
     <div class="card-body">
@@ -53,7 +53,7 @@
       <p class="card-text fs-5" id="textoNovedades">Cargando novedades...</p>
     </div>
   </div>
-  
+
   <!-- TARJETAS POWER BI -->
   <div class="row g-2 mb-3">
     <div class="col-6 col-md-3"><div class="card p-2 text-center border-start border-4 border-primary"><small class="text-muted fw-bold">Citas Atendidas</small><h4 class="text-primary mb-0" id="totalCitas">0</h4></div></div>
@@ -98,8 +98,8 @@
     </div>
   </div>
 
-  <!-- REPORTES -->
-  <div class="row mb-4">
+  <!-- REPORTES (SE OCULTA PARA PRESIDENCIA Y DESPACHO) -->
+  <div class="row mb-4" id="bloqueReportes">
     <div class="col-12">
       <div class="card">
         <div class="card-header py-2">🚀 Generación de Reportes</div>
@@ -128,12 +128,13 @@
 
     // Lógica para perfiles ejecutivos
     if (usuarioLogueado === 'Despacho' || usuarioLogueado === 'Presidencia') {
-      // Mostrar el cartel de novedades
+      // 1. Mostrar el cartel de novedades
       document.getElementById('panelNovedades').classList.remove('d-none');
-      // Ocultar la tabla de seguimiento (que es muy técnica)
-      document.querySelector('.card.mb-3 .card-body .table-responsive').parentElement.parentElement.classList.add('d-none'); 
       
-      // Cargar las novedades
+      // 2. Ocultar el bloque de generación de reportes
+      document.getElementById('bloqueReportes').style.display = 'none';
+
+      // 3. Cargar las novedades
       fetch(URL_APPS_SCRIPT, { method: 'POST', body: JSON.stringify({ accion: 'obtenerNovedadesDelDia' }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
       .then(res => res.json()).then(resp => {
         if (resp.exito) document.getElementById('textoNovedades').innerText = resp.mensaje;
