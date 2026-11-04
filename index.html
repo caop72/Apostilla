@@ -361,8 +361,7 @@ function SEGURIDAD_CAOP_redirigir(rol, usuario, correo) {
   sessionStorage.setItem('rol', rol.trim());
   sessionStorage.setItem('correo', correo.trim());
 
-  if (u === 'Observatorio' || u === 'Observatorio1') window.location.href = 'observatorio.html';
-  else if (u.startsWith('CNC')) window.location.href = 'cnc.html';
+  if (u === 'Observatorio') window.location.href = 'observatorio.html';
   else window.location.href = 'formulario.html';
 }
 </script>
