@@ -13,9 +13,11 @@
     #pantalla-portada {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      /* Fondo tecnológico con filtro azul oscuro */
+      
+      /* 👇 AQUÍ DEBES CAMBIAR 'fondo_tecnologico.jpg' POR TU IMAGEN */
       background: linear-gradient(rgba(10, 25, 60, 0.85), rgba(5, 15, 40, 0.95)), 
-                  url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+                  url('fondo_tecnologico.jpg') center/cover no-repeat;
+                  
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -27,14 +29,14 @@
     /* Textos de la portada */
     .titulo-portada {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #00d2ff; /* Azul brillante tecnológico */
+      color: #ffffff;
       font-size: 1.5rem;
       font-weight: 300;
       letter-spacing: 5px;
       text-transform: uppercase;
-      margin-bottom: -10px;
+      margin-bottom: 5px;
       z-index: 10;
-      text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Sombra fuerte para que resalte */
     }
 
     .subtitulo-portada {
@@ -42,34 +44,23 @@
       color: #ffffff;
       font-size: 3.5rem;
       font-weight: 900;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       z-index: 10;
       text-transform: uppercase;
       letter-spacing: 2px;
-      /* Efecto de brillo metálico */
-      background: linear-gradient(to right, #ffffff 20%, #a0c4ff 50%, #ffffff 80%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-size: 200% auto;
-      animation: shine 3s linear infinite;
-      text-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    }
-
-    @keyframes shine {
-      to { background-position: 200% center; }
+      text-shadow: 0 0 20px rgba(0, 210, 255, 0.8), 0 0 10px rgba(0, 210, 255, 0.5); /* Resplandor azul */
     }
 
     /* Contenedor del logo SIN la caja verde */
     .card-container {
-      width: 350px;
-      height: 350px;
+      width: 320px;
+      height: 320px;
       display: flex;
       justify-content: center;
       align-items: center;
       position: relative;
       z-index: 10;
-      /* Un pequeño resplandor detrás del logo */
-      filter: drop-shadow(0 0 30px rgba(0, 210, 255, 0.2));
+      filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.4)); /* Resplandor alrededor del logo */
     }
 
     svg { width: 100%; height: 100%; overflow: visible; }
@@ -119,17 +110,19 @@
       font-weight: bold;
       text-transform: uppercase;
       transition: all 0.3s ease;
-      color: #00d2ff;
+      color: #ffffff;
+      background-color: rgba(0, 210, 255, 0.2); /* Fondo semitransparente para que se lea bien */
       text-decoration: none;
-      box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
       cursor: pointer;
       z-index: 10;
       letter-spacing: 2px;
+      margin-top: 20px;
     }
     .btn-ingresar-portada:hover {
       background: #00d2ff;
       color: #0d1b5e;
-      box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.8);
       transform: scale(1.05);
     }
 
@@ -151,15 +144,13 @@
 </head>
 <body>
 
-  <!-- ========================================================
-       CAPA 1: LA PORTADA CON EL LOGO ANIMADO Y FONDO TECH
-       ======================================================== -->
   <div id="pantalla-portada">
     
+    <!-- TEXTOS DE LA PORTADA -->
     <div class="titulo-portada">Observatorio Estadístico</div>
     <div class="subtitulo-portada">Apostillas</div>
 
-    <!-- TU LOGO ANIMADO (Sin caja de fondo) -->
+    <!-- LOGO ANIMADO (Sin caja) -->
     <div class="card-container">
         <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -210,9 +201,7 @@
     </button>
   </div>
 
-  <!-- ========================================================
-       CAPA 2: EL FORMULARIO DE LOGIN
-       ======================================================== -->
+  <!-- EL RESTO DEL LOGIN SE MANTIENE IGUAL -->
   <div class="card login-card">
     <div class="flag-bar"></div>
     <div class="card-body p-4">
@@ -255,7 +244,7 @@
   </div>
 
 <script>
-// 🛡️ BLOQUE SEGURIDAD_CAOP (Frontend V1.0)
+// EL SCRIPT DE LOGIN SE MANTIENE EXACTAMENTE IGUAL
 const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx7aDFr2lTIQcLgwyOqGODXQQFzsJhivdL02huOwvX4iC1zSsEGts75QL3rED3BcR3zhw/exec";
 
 function SEGURIDAD_CAOP_iniciarSesion(event) {
