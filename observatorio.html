@@ -188,14 +188,19 @@
       return; 
     }
 
-    // Obtenemos la fecha de hoy en formato ISO (yyyy-MM-dd) para comparar
+    // 👇 OBTENEMOS LA FECHA DE HOY EN FORMATO TEXTO (DD/MM/YYYY)
     const hoy = new Date();
-    const hoyISO = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
+    const diaHoy = String(hoy.getDate()).padStart(2, '0');
+    const mesHoy = String(hoy.getMonth() + 1).padStart(2, '0');
+    const anioHoy = hoy.getFullYear();
+    const fechaHoyTexto = `${diaHoy}/${mesHoy}/${anioHoy}`; 
 
     let html = '';
     registros.forEach(r => {
-      // 👇 Si la fecha del reporte es HOY, le asignamos la clase verde claro
-      let claseFila = (r.fechaEnvioISO === hoyISO) ? 'fila-hoy' : '';
+      // 👇 Comparamos si los primeros 10 caracteres de la fecha (dd/MM/yyyy) coinciden con hoy
+      // (Usamos los primeros 10 porque la fecha viene con hora: "04/11/2026 16:04:49")
+      let fechaReporteTexto = String(r.fechaEnvio).substring(0, 10); 
+      let claseFila = (fechaReporteTexto === fechaHoyTexto) ? 'fila-hoy' : '';
 
       html += `
         <tr class="${claseFila}">
