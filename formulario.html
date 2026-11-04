@@ -98,7 +98,23 @@
     const form = event.target;
     const formObject = Object.fromEntries(new FormData(form).entries());
     const btn = document.getElementById('btnGuardar');
-    
+
+    // 👇 NUEVA VALIDACIÓN EN EL FRONTEND
+    const docs = Number(formObject.docsTotal);
+    const rech = Number(formObject.rechazados);
+    const val = Number(formObject.validados);
+
+    if ((rech + val) !== docs) {
+      Swal.fire({
+        title: 'Error de Cuadre',
+        text: `Los documentos Rechazados (${rech}) + Validados (${val}) suman ${rech + val}, pero el Total de Documentos es ${docs}. Por favor, verifique las cantidades.`,
+        icon: 'error',
+        confirmButtonColor: '#0d1b5e'
+      });
+      return; // Detiene el envío
+    }
+
+    // Si pasa la validación, procede a enviar
     btn.innerText = "Enviando...";
     btn.disabled = true;
 
@@ -112,7 +128,6 @@
       if (resp.exito) {
         Swal.fire({ title: '¡Éxito!', text: resp.mensaje, icon: 'success', confirmButtonColor: '#0d1b5e' });
         form.reset();
-        // Restauramos el nombre de la OPT después del reset
         document.getElementById('inputNombreOPT').value = formObject.nombreOPT;
       } else {
         Swal.fire('Error', resp.mensaje, 'error');
