@@ -70,50 +70,61 @@
   </div>
 
   <!-- TARJETAS DE ESTADÍSTICAS -->
+    <!-- TARJETAS DE ESTADÍSTICAS TIPO POWER BI -->
   <div class="row g-2 mb-3">
     <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Total Registros</small>
-        <h4 class="text-primary mb-0" id="totalRegistros">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
+      <div class="card p-2 text-center border-start border-4 border-primary">
         <small class="text-muted fw-bold">Citas Atendidas</small>
-        <h4 class="text-info mb-0" id="totalCitas">0</h4>
+        <h4 class="text-primary mb-0" id="totalCitas">0</h4>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Docs Validados</small>
-        <h4 class="text-success mb-0" id="totalValidados">0</h4>
+      <div class="card p-2 text-center border-start border-4 border-success">
+        <small class="text-muted fw-bold">Ingresos Totales (Bs)</small>
+        <h4 class="text-success mb-0" id="totalIngresosBs">0</h4>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Tasa Rechazo</small>
-        <h4 class="text-danger mb-0" id="tasaRechazo">0%</h4>
+      <div class="card p-2 text-center border-start border-4 border-info">
+        <small class="text-muted fw-bold">Ingresos (USD)</small>
+        <h4 class="text-info mb-0" id="totalIngresosUsd">0</h4>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">Ingresos (Bs)</small>
-        <h4 class="text-dark mb-0" id="totalIngresos">0</h4>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card p-2 text-center">
-        <small class="text-muted fw-bold">T. Respuesta Prom.</small>
-        <h4 class="text-warning mb-0" id="tiempoRespuesta">0h</h4>
+      <div class="card p-2 text-center border-start border-4 border-warning">
+        <small class="text-muted fw-bold">Tasa Promedio</small>
+        <h4 class="text-warning mb-0" id="tasaPromedio">0</h4>
       </div>
     </div>
   </div>
+  
+  <div class="row g-2 mb-3">
+    <div class="col-12 col-md-4">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Variación de Tasa (Min - Max)</small>
+        <h5 class="text-dark mb-0" id="variacionTasa">0</h5>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">Tasa de Rechazo</small>
+        <h5 class="text-danger mb-0" id="tasaRechazo">0%</h5>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card p-2 text-center">
+        <small class="text-muted fw-bold">OPT con Mayor Producción</small>
+        <h5 class="text-primary mb-0" id="optLider">N/A</h5>
+      </div>
+    </div>
+  </div>
+  
 
   <!-- GRÁFICOS -->
   <div class="row g-3 mb-3">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header py-2">📊 Citas vs Validados por OPT</div>
+        <div class="card-header py-2">📊 Producción por OPT (Bolívares)</div>
         <div class="card-body">
           <div class="chart-container"><canvas id="graficoBarras"></canvas></div>
         </div>
@@ -121,14 +132,34 @@
     </div>
     <div class="col-md-4">
       <div class="card">
-        <div class="card-header py-2">🍩 Estados</div>
+        <div class="card-header py-2">🍩 Participación de Ingresos</div>
         <div class="card-body">
           <div class="chart-container"><canvas id="graficoDona"></canvas></div>
         </div>
       </div>
     </div>
   </div>
-
+  
+  <!-- TABLA DE RANKING -->
+  <div class="card mb-3">
+    <div class="card-header py-2">🏆 Ranking de Producción por OPT</div>
+    <div class="card-body p-0">
+      <table class="table table-sm table-striped mb-0 text-center">
+        <thead>
+          <tr>
+            <th>Posición</th>
+            <th>OPT</th>
+            <th>Ingresos Totales (Bs)</th>
+            <th>Participación (%)</th>
+            <th>Media de Citas por Reporte</th>
+          </tr>
+        </thead>
+        <tbody id="tablaRanking">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
   <!-- TABLA DE SEGUIMIENTO -->
   <div class="card mb-3">
     <div class="card-header py-2 d-flex justify-content-between align-items-center">
@@ -319,44 +350,72 @@
     tbody.innerHTML = html;
   }
 
-  function renderizarEstadisticas(data) {
-    document.getElementById('totalRegistros').innerText = data.totales.registros;
+    function renderizarEstadisticas(data) {
+    // 1. Llenar tarjetas
     document.getElementById('totalCitas').innerText = data.totales.citas;
-    document.getElementById('totalValidados').innerText = data.totales.validados;
+    document.getElementById('totalIngresosBs').innerText = "Bs. " + data.totales.montoBs.toLocaleString('es-VE', {maximumFractionDigits: 0});
+    document.getElementById('totalIngresosUsd').innerText = "$ " + data.totales.montoUSD.toLocaleString('es-VE', {maximumFractionDigits: 0});
+    document.getElementById('tasaPromedio').innerText = data.totales.tasaPromedio.toFixed(2);
+    document.getElementById('variacionTasa').innerText = `${data.totales.tasaMin.toFixed(2)} - ${data.totales.tasaMax.toFixed(2)}`;
     document.getElementById('tasaRechazo').innerText = data.totales.tasaRechazo + '%';
-    document.getElementById('totalIngresos').innerText = data.totales.montoBs.toLocaleString('es-VE', {maximumFractionDigits: 0});
-    document.getElementById('tiempoRespuesta').innerText = data.totales.tiempoRespuestaPromedio + 'h';
+    document.getElementById('optLider').innerText = data.optLider;
 
+    // 2. Destruir gráficos previos
     if (graficoBarrasInst) graficoBarrasInst.destroy();
     if (graficoDonaInst) graficoDonaInst.destroy();
 
-    const opts = ['OPT CUA', 'OPT CARMELITAS', 'OPT CHACAO', 'OPT GALERIAS'].filter(o => data.porOPT[o]);
-    const citasPorOpt = opts.map(o => data.porOPT[o].citas);
-    const validadosPorOpt = opts.map(o => data.porOPT[o].validados);
+    // 3. Gráfico de Barras (Producción en Bs)
+    const opts = data.ranking.map(r => r.opt);
+    const montosPorOpt = data.ranking.map(r => data.porOPT[r.opt].montoBs);
 
     graficoBarrasInst = new Chart(document.getElementById('graficoBarras').getContext('2d'), {
       type: 'bar',
       data: {
         labels: opts,
-        datasets: [
-          { label: 'Citas', data: citasPorOpt, backgroundColor: '#0d1b5e' },
-          { label: 'Validados', data: validadosPorOpt, backgroundColor: '#198754' }
-        ]
+        datasets: [{
+          label: 'Ingresos (Bs)',
+          data: montosPorOpt,
+          backgroundColor: ['#0d1b5e', '#198754', '#0dcaf0', '#ffc107']
+        }]
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
     });
 
+    // 4. Gráfico de Dona (Participación)
+    const participaciones = data.ranking.map(r => r.participacion);
     graficoDonaInst = new Chart(document.getElementById('graficoDona').getContext('2d'), {
       type: 'doughnut',
       data: {
-        labels: ['Validados', 'Pendientes', 'Devueltos'],
+        labels: opts,
         datasets: [{
-          data: [data.estados.Validado || 0, data.estados.Pendiente || 0, data.estados.Devuelto || 0],
-          backgroundColor: ['#198754', '#ffc107', '#dc3545']
+          data: participaciones,
+          backgroundColor: ['#0d1b5e', '#198754', '#0dcaf0', '#ffc107']
         }]
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
+
+    // 5. Llenar tabla de Ranking
+    const tbody = document.getElementById('tablaRanking');
+    let html = '';
+    data.ranking.forEach((r, index) => {
+      let medalla = index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : (index + 1)));
+      html += `
+        <tr>
+          <td class="align-middle">${medalla}</td>
+          <td class="fw-bold text-primary align-middle">${r.opt}</td>
+          <td class="align-middle">Bs. ${data.porOPT[r.opt].montoBs.toLocaleString('es-VE', {maximumFractionDigits: 0})}</td>
+          <td class="align-middle">${r.participacion}%</td>
+          <td class="align-middle">${data.porOPT[r.opt].mediaCitas} citas</td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
   }
 
   // 🚀 BOTÓN REPORTE DIARIO
