@@ -327,7 +327,7 @@
       else if (r.estado === 'Pendiente') { badgeClass = 'bg-warning text-dark'; filaClass = 'fila-pendiente'; }
       else if (r.estado === 'Devuelto') { badgeClass = 'bg-danger'; filaClass = 'fila-devuelto'; }
 
-      html += `
+            html += `
         <tr class="${filaClass}">
           <td><small>${r.id}</small></td>
           <td><small>${r.fechaEnvio}</small></td>
@@ -342,6 +342,14 @@
           <td><small>${r.fechaValidacion || '-'}</small></td>
           <td><small>${r.tiempoRespuestaHoras ? r.tiempoRespuestaHoras + 'h' : '-'}</small></td>
           <td><small>${r.comentarioCNC || '-'}</small></td>
+          
+          <!-- 👇 NUEVA CELDA CON EL BOTÓN -->
+          <td>
+            ${r.revisadoPor 
+              ? `<span class="text-success" title="Revisado por ${r.revisadoPor} el ${r.fechaRevision}">✅ ${r.revisadoPor}</span>` 
+              : `<button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="marcarClip('${r.id}')" title="Marcar como revisado">📎</button>`
+            }
+          </td>
         </tr>
       `;
     });
@@ -576,6 +584,37 @@
         else Swal.fire({ title: '¡Guardado!', html: `✅ <b>${cambios.length}</b> valor(es) actualizado(s).`, icon: 'success', timer: 2500, showConfirmButton: false });
       })
       .catch(() => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+  }
+    function marcarClip(id) {
+    const usuario = sessionStorage.getItem('usuario');
+    
+    Swal.fire({
+      title: '¿Marcar como revisado?',
+      text: 'Quedará registro de tu revisión.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#0d6efd',
+      confirmButtonText: 'Sí, marcar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          body: JSON.stringify({ accion: 'marcarRevisado', id: id, usuario: usuario }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(resp => {
+          if (resp.exito) {
+            Swal.fire({ title: '¡Listo!', text: resp.mensaje, icon: 'success', timer: 1500, showConfirmButton: false });
+            aplicarFiltros(); // Recarga la tabla para mostrar el check
+          } else {
+            Swal.fire('Error', resp.mensaje, 'error');
+          }
+        })
+        .catch(() => Swal.fire('Error', 'No se pudo conectar.', 'error'));
+      }
+    });
   }
 </script>
 
