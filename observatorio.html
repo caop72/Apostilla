@@ -299,9 +299,19 @@
     }
   }
 
-  function renderizarTabla(registros) {
+    function renderizarTabla(registros) {
     const tbody = document.getElementById('tablaSeguimiento');
     document.getElementById('countTabla').innerText = registros.length + ' registros';
+
+    // 👇 ORDENAR: Del más reciente al más antiguo
+    registros.sort((a, b) => {
+      // Convertimos la fecha de envío (dd/MM/yyyy HH:mm:ss) a un formato que JS entienda
+      const fechaA = a.fechaEnvio.split(/[\/\s:]/); 
+      const fechaB = b.fechaEnvio.split(/[\/\s:]/);
+      const dateA = new Date(fechaA[2], fechaA[1]-1, fechaA[0], fechaA[3] || 0, fechaA[4] || 0, fechaA[5] || 0);
+      const dateB = new Date(fechaB[2], fechaB[1]-1, fechaB[0], fechaB[3] || 0, fechaB[4] || 0, fechaB[5] || 0);
+      return dateB - dateA; // El signo menos invierte el orden
+    });
 
     if (registros.length === 0) {
       tbody.innerHTML = '<tr><td colspan="13" class="text-center text-muted py-3">No hay registros.</td></tr>';
