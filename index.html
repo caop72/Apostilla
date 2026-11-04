@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenido - Sistema Apostilla</title>
+  <title>Bienvenido - Sistema CAOP Apostilla</title>
   
   <!-- ETIQUETAS OPEN GRAPH -->
   <meta property="og:title" content="Sistema CAOP Apostilla">
@@ -22,10 +22,9 @@
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       
-      /* Fondo 100% opaco con gradiente azul oscuro y la imagen tecnológica */
       background: linear-gradient(rgba(13, 27, 94, 0.9), rgba(5, 15, 40, 1)), 
                   url('fondo_tecnologico.jpg') center/cover no-repeat;
-      background-color: #0d1b5e; /* Color de respaldo por si la imagen no carga */
+      background-color: #0d1b5e; 
       
       display: flex;
       flex-direction: column;
@@ -38,7 +37,7 @@
     /* Textos de la portada */
     .titulo-portada {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #00d2ff; /* Azul brillante */
+      color: #00d2ff; 
       font-size: 1.2rem;
       font-weight: 600;
       letter-spacing: 5px;
@@ -57,7 +56,6 @@
       z-index: 10;
       text-transform: uppercase;
       letter-spacing: 2px;
-      /* Efecto de texto metálico/blanco */
       background: linear-gradient(to right, #ffffff 20%, #e0e0e0 50%, #ffffff 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -162,14 +160,12 @@
 </head>
 <body>
 
-  <!-- CAPA 1: LA PORTADA (100% OPACA) -->
+  <!-- CAPA 1: LA PORTADA -->
   <div id="pantalla-portada">
     
-    <!-- TEXTOS -->
     <div class="titulo-portada">Observatorio Estadístico</div>
     <div class="subtitulo-portada">Apostillas</div>
 
-    <!-- LOGO ANIMADO -->
     <div class="card-container">
         <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -214,13 +210,12 @@
         </svg>
     </div>
 
-    <!-- BOTÓN (Lleva el texto sin el cohete) -->
     <button class="btn-ingresar-portada" onclick="document.getElementById('pantalla-portada').style.opacity = '0'; setTimeout(() => document.getElementById('pantalla-portada').style.display = 'none', 600);">
        INGRESAR AL SISTEMA
     </button>
   </div>
 
-  <!-- CAPA 2: EL LOGIN (Queda oculto detrás de la capa 1) -->
+  <!-- CAPA 2: EL LOGIN -->
   <div class="card login-card">
     <div class="flag-bar"></div>
     <div class="card-body p-4">
@@ -230,13 +225,13 @@
         <div class="mb-3">
           <label class="form-label">Seleccione Usuario</label>
           <select class="form-select" id="tipoUsuario" required>
-  <option value="" disabled selected>Elija una opción...</option>
-  <option value="Observatorio">Observatorio</option>
-  <option value="OPT CUA">OPT CUA</option>
-  <option value="OPT CARMELITAS">OPT CARMELITAS</option>
-  <option value="OPT CHACAO">OPT CHACAO</option>
-  <option value="OPT GALERIAS">OPT GALERIAS</option>
-</select>
+            <option value="" disabled selected>Elija una opción...</option>
+            <option value="Observatorio">Observatorio</option>
+            <option value="OPT CUA">OPT CUA</option>
+            <option value="OPT CARMELITAS">OPT CARMELITAS</option>
+            <option value="OPT CHACAO">OPT CHACAO</option>
+            <option value="OPT GALERIAS">OPT GALERIAS</option>
+          </select>
         </div>
 
         <div class="mb-3">
@@ -261,7 +256,6 @@
   </div>
 
 <script>
-
 const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx7aDFr2lTIQcLgwyOqGODXQQFzsJhivdL02huOwvX4iC1zSsEGts75QL3rED3BcR3zhw/exec";
 
 function SEGURIDAD_CAOP_iniciarSesion(event) {
@@ -361,8 +355,13 @@ function SEGURIDAD_CAOP_redirigir(rol, usuario, correo) {
   sessionStorage.setItem('rol', rol.trim());
   sessionStorage.setItem('correo', correo.trim());
 
-  if (u === 'Observatorio') window.location.href = 'observatorio.html';
-  else window.location.href = 'formulario.html';
+  if (u === 'Observatorio') {
+    window.location.href = 'observatorio.html';
+  } else if (u.startsWith('OPT')) {
+    window.location.href = 'formulario.html';
+  } else {
+    window.location.href = 'index.html'; // Por seguridad
+  }
 }
 </script>
 </body>
