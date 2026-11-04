@@ -15,7 +15,6 @@
     .chart-container { position: relative; height: 50vw; max-height: 300px; width: 100%; }
     .tabla-seguimiento { font-size: 0.85rem; }
     .tabla-seguimiento th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
-    .badge-estado { font-size: 0.75rem; padding: 4px 8px; }
   </style>
 </head>
 <body>
@@ -37,16 +36,18 @@
     <div class="card-header py-2">🔍 Filtros de Búsqueda</div>
     <div class="card-body">
       <div class="row g-2">
-        <div class="col-6 col-md-3"><label class="form-label small fw-bold mb-1">Desde</label><input type="date" class="form-control form-control-sm" id="filtroDesde"></div>
-        <div class="col-6 col-md-3"><label class="form-label small fw-bold mb-1">Hasta</label><input type="date" class="form-control form-control-sm" id="filtroHasta"></div>
-        <div class="col-6 col-md-2"><label class="form-label small fw-bold mb-1">OPT</label><select class="form-select form-select-sm" id="filtroOPT"><option value="">Todas</option></select></div>
-        <div class="col-6 col-md-2"><label class="form-label small fw-bold mb-1">Estado</label><select class="form-select form-select-sm" id="filtroEstado"><option value="">Todos</option><option value="Validado">🟢 Validado</option></select></div>
-        <div class="col-12 col-md-2 d-flex align-items-end gap-2"><button class="btn btn-primary btn-sm flex-fill" onclick="aplicarFiltros()">Aplicar</button><button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">Limpiar</button></div>
+        <div class="col-6 col-md-4"><label class="form-label small fw-bold mb-1">Desde</label><input type="date" class="form-control form-control-sm" id="filtroDesde"></div>
+        <div class="col-6 col-md-4"><label class="form-label small fw-bold mb-1">Hasta</label><input type="date" class="form-control form-control-sm" id="filtroHasta"></div>
+        <div class="col-6 col-md-4"><label class="form-label small fw-bold mb-1">OPT</label><select class="form-select form-select-sm" id="filtroOPT"><option value="">Todas</option></select></div>
+        <div class="col-12 mt-2 d-flex gap-2">
+          <button class="btn btn-primary btn-sm flex-fill" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- NOVEDADES EJECUTIVAS (SOLO PARA DESPACHO/PRESIDENCIA) -->
+  <!-- NOVEDADES EJECUTIVAS -->
   <div class="card mb-3 d-none" id="panelNovedades" style="background: linear-gradient(135deg, #0d1b5e 0%, #1e3a8a 100%); color: white;">
     <div class="card-body">
       <h5 class="card-title fw-bold">📰 Resumen Ejecutivo del Día</h5>
@@ -63,7 +64,7 @@
   </div>
   
   <div class="row g-2 mb-3">
-    <div class="col-12 col-md-4"><div class="card p-2 text-center"><small class="text-muted fw-bold">Variación de Tasa (Min - Max)</small><h5 class="text-dark mb-0" id="variacionTasa">0</h5></div></div>
+    <div class="col-12 col-md-4"><div class="card p-2 text-center"><small class="text-muted fw-bold">Variación de Tasa</small><h5 class="text-dark mb-0" id="variacionTasa">0</h5></div></div>
     <div class="col-12 col-md-4"><div class="card p-2 text-center"><small class="text-muted fw-bold">Tasa de Rechazo</small><h5 class="text-danger mb-0" id="tasaRechazo">0%</h5></div></div>
     <div class="col-12 col-md-4"><div class="card p-2 text-center"><small class="text-muted fw-bold">OPT Líder</small><h5 class="text-primary mb-0" id="optLider">N/A</h5></div></div>
   </div>
@@ -79,7 +80,7 @@
     <div class="card-header py-2">🏆 Ranking de Producción por OPT</div>
     <div class="card-body p-0">
       <table class="table table-sm table-striped mb-0 text-center">
-        <thead><tr><th>Posición</th><th>OPT</th><th>Ingresos Totales (Bs)</th><th>Participación (%)</th><th>Media de Citas por Reporte</th></tr></thead>
+        <thead><tr><th>Posición</th><th>OPT</th><th>Ingresos Totales (Bs)</th><th>Participación (%)</th><th>Media de Citas</th></tr></thead>
         <tbody id="tablaRanking"></tbody>
       </table>
     </div>
@@ -91,14 +92,14 @@
     <div class="card-body p-0">
       <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
         <table class="table table-sm table-hover tabla-seguimiento mb-0">
-          <thead><tr><th>ID</th><th>Fecha Envío</th><th>OPT</th><th>Citas</th><th>Docs</th><th>Val.</th><th>Rech.</th><th>Monto Bs</th><th>Estado</th><th>Validado Por</th><th>Fecha Validación</th><th>T. Resp.</th></tr></thead>
-          <tbody id="tablaSeguimiento"><tr><td colspan="12" class="text-center text-muted py-3">Cargando...</td></tr></tbody>
+          <thead><tr><th>ID</th><th>Fecha Envío</th><th>OPT</th><th>Citas</th><th>Docs</th><th>Val. (OPT)</th><th>Rech. (OPT)</th><th>Monto Bs</th></tr></thead>
+          <tbody id="tablaSeguimiento"><tr><td colspan="8" class="text-center text-muted py-3">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- REPORTES (OCULTO POR DEFECTO PARA GERENTES) -->
+  <!-- REPORTES -->
   <div class="row mb-4" id="bloqueReportes">
     <div class="col-12">
       <div class="card">
@@ -121,43 +122,20 @@
   let graficoBarrasInst = null, graficoDonaInst = null;
 
   document.addEventListener('DOMContentLoaded', function () {
-    // 1. Limpiamos y obtenemos el nombre del usuario
     const usuarioLogueado = (sessionStorage.getItem('usuario') || '').trim();
     if (!usuarioLogueado) { window.location.href = 'index.html'; return; }
     document.getElementById('nombreUsuario').innerText = usuarioLogueado;
 
-    // 2. LÓGICA DE PERFILES: Ocultar botones si es gerente
     if (usuarioLogueado === 'Despacho' || usuarioLogueado === 'Presidencia') {
-      
-      // Mostrar panel de novedades
       document.getElementById('panelNovedades').classList.remove('d-none');
-      
-      // Ocultar el bloque entero de reportes de forma forzada
-      const bloqueReportes = document.getElementById('bloqueReportes');
-      if (bloqueReportes) {
-        bloqueReportes.style.display = 'none';
-      }
+      document.getElementById('bloqueReportes').style.display = 'none';
 
-      // Cargar las novedades desde el backend
-      fetch(URL_APPS_SCRIPT, { 
-        method: 'POST', 
-        body: JSON.stringify({ accion: 'obtenerNovedadesDelDia' }), 
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
-      })
-      .then(res => res.json())
-      .then(resp => {
-        if (resp.exito) {
-          document.getElementById('textoNovedades').innerText = resp.mensaje;
-        } else {
-          document.getElementById('textoNovedades').innerText = "No se pudieron cargar las novedades.";
-        }
-      })
-      .catch(() => {
-        document.getElementById('textoNovedades').innerText = "Error al conectar con el servidor.";
+      fetch(URL_APPS_SCRIPT, { method: 'POST', body: JSON.stringify({ accion: 'obtenerNovedadesDelDia' }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
+      .then(res => res.json()).then(resp => {
+        if (resp.exito) document.getElementById('textoNovedades').innerText = resp.mensaje;
       });
     }
 
-    // 3. Cargar los datos normales
     cargarListaOPTs();
     aplicarFiltros();
   });
@@ -175,11 +153,11 @@
   }
 
   function obtenerFiltros() {
-    return { opt: document.getElementById('filtroOPT').value, estado: document.getElementById('filtroEstado').value, fechaDesde: document.getElementById('filtroDesde').value, fechaHasta: document.getElementById('filtroHasta').value };
+    return { opt: document.getElementById('filtroOPT').value, fechaDesde: document.getElementById('filtroDesde').value, fechaHasta: document.getElementById('filtroHasta').value };
   }
 
   function limpiarFiltros() {
-    document.getElementById('filtroOPT').value = ''; document.getElementById('filtroEstado').value = '';
+    document.getElementById('filtroOPT').value = '';
     document.getElementById('filtroDesde').value = ''; document.getElementById('filtroHasta').value = '';
     aplicarFiltros();
   }
@@ -197,11 +175,21 @@
     const tbody = document.getElementById('tablaSeguimiento');
     document.getElementById('countTabla').innerText = registros.length + ' registros';
     registros.sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
-    if (registros.length === 0) { tbody.innerHTML = '<tr><td colspan="12" class="text-center text-muted py-3">No hay registros.</td></tr>'; return; }
+    if (registros.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">No hay registros.</td></tr>'; return; }
     let html = '';
     registros.forEach(r => {
-      let badgeClass = 'bg-success';
-      html += `<tr><td><small>${r.id}</small></td><td><small>${r.fechaEnvio}</small></td><td><strong>${r.opt}</strong></td><td>${r.citas}</td><td>${r.docs}</td><td class="text-success">${r.validados}</td><td class="text-danger">${r.rechazados}</td><td>${r.montoBs.toLocaleString('es-VE', {minimumFractionDigits: 2})}</td><td><span class="badge ${badgeClass} badge-estado">${r.estado}</span></td><td><small>${r.validadoPor || '-'}</small></td><td><small>${r.fechaValidacion || '-'}</small></td><td><small>${r.tiempoRespuestaHoras ? r.tiempoRespuestaHoras + 'h' : '-'}</small></td></tr>`;
+      html += `
+        <tr>
+          <td><small>${r.id}</small></td>
+          <td><small>${r.fechaEnvio}</small></td>
+          <td><strong>${r.opt}</strong></td>
+          <td>${r.citas}</td>
+          <td>${r.docs}</td>
+          <td class="text-success">${r.validados}</td>
+          <td class="text-danger">${r.rechazados}</td>
+          <td>${r.montoBs.toLocaleString('es-VE', {minimumFractionDigits: 2})}</td>
+        </tr>
+      `;
     });
     tbody.innerHTML = html;
   }
@@ -242,7 +230,7 @@
   }
 
   function generarReporte() {
-    Swal.fire({ title: '¿Generar Diario?', icon: 'question', showCancelButton: true, confirmButtonColor: '#198754', confirmButtonText: 'Sí, generar' })
+    Swal.fire({ title: '¿Generar Diario?', icon: 'question', showCancelButton: true, confirmButtonColor: '#198754', confirmButtonText: 'Sí' })
     .then((result) => {
       if (result.isConfirmed) {
         Swal.fire({ title: 'Generando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -254,7 +242,7 @@
   }
 
   function generarReporteMensual() {
-    Swal.fire({ title: '¿Generar Mensual?', icon: 'question', showCancelButton: true, confirmButtonColor: '#0dcaf0', confirmButtonText: 'Sí, generar' })
+    Swal.fire({ title: '¿Generar Mensual?', icon: 'question', showCancelButton: true, confirmButtonColor: '#0dcaf0', confirmButtonText: 'Sí' })
     .then((result) => {
       if (result.isConfirmed) {
         Swal.fire({ title: 'Generando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -266,7 +254,7 @@
   }
 
   function enviarInformeEjecutivo() {
-    Swal.fire({ title: '¿Enviar Informe?', icon: 'question', showCancelButton: true, confirmButtonColor: '#0d1b5e', confirmButtonText: 'Sí, enviar' })
+    Swal.fire({ title: '¿Enviar Informe?', icon: 'question', showCancelButton: true, confirmButtonColor: '#0d1b5e', confirmButtonText: 'Sí' })
     .then((result) => {
       if (result.isConfirmed) {
         Swal.fire({ title: 'Enviando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
