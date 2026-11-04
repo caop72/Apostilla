@@ -98,7 +98,7 @@
     </div>
   </div>
 
-  <!-- REPORTES (SE OCULTA PARA PRESIDENCIA Y DESPACHO) -->
+  <!-- REPORTES (OCULTO POR DEFECTO PARA GERENTES) -->
   <div class="row mb-4" id="bloqueReportes">
     <div class="col-12">
       <div class="card">
@@ -121,26 +121,43 @@
   let graficoBarrasInst = null, graficoDonaInst = null;
 
   document.addEventListener('DOMContentLoaded', function () {
+    // 1. Limpiamos y obtenemos el nombre del usuario
     const usuarioLogueado = (sessionStorage.getItem('usuario') || '').trim();
     if (!usuarioLogueado) { window.location.href = 'index.html'; return; }
-    
     document.getElementById('nombreUsuario').innerText = usuarioLogueado;
 
-    // Lógica para perfiles ejecutivos
+    // 2. LÓGICA DE PERFILES: Ocultar botones si es gerente
     if (usuarioLogueado === 'Despacho' || usuarioLogueado === 'Presidencia') {
-      // 1. Mostrar el cartel de novedades
+      
+      // Mostrar panel de novedades
       document.getElementById('panelNovedades').classList.remove('d-none');
       
-      // 2. Ocultar el bloque de generación de reportes
-      document.getElementById('bloqueReportes').style.display = 'none';
+      // Ocultar el bloque entero de reportes de forma forzada
+      const bloqueReportes = document.getElementById('bloqueReportes');
+      if (bloqueReportes) {
+        bloqueReportes.style.display = 'none';
+      }
 
-      // 3. Cargar las novedades
-      fetch(URL_APPS_SCRIPT, { method: 'POST', body: JSON.stringify({ accion: 'obtenerNovedadesDelDia' }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
-      .then(res => res.json()).then(resp => {
-        if (resp.exito) document.getElementById('textoNovedades').innerText = resp.mensaje;
+      // Cargar las novedades desde el backend
+      fetch(URL_APPS_SCRIPT, { 
+        method: 'POST', 
+        body: JSON.stringify({ accion: 'obtenerNovedadesDelDia' }), 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
+      })
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.exito) {
+          document.getElementById('textoNovedades').innerText = resp.mensaje;
+        } else {
+          document.getElementById('textoNovedades').innerText = "No se pudieron cargar las novedades.";
+        }
+      })
+      .catch(() => {
+        document.getElementById('textoNovedades').innerText = "Error al conectar con el servidor.";
       });
     }
 
+    // 3. Cargar los datos normales
     cargarListaOPTs();
     aplicarFiltros();
   });
