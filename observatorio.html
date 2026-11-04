@@ -174,12 +174,26 @@
   function renderizarTabla(registros) {
     const tbody = document.getElementById('tablaSeguimiento');
     document.getElementById('countTabla').innerText = registros.length + ' registros';
+    
+    // Ordenar del más reciente al más antiguo
     registros.sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
-    if (registros.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">No hay registros.</td></tr>'; return; }
+    
+    if (registros.length === 0) { 
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">No hay registros.</td></tr>'; 
+      return; 
+    }
+
+    // Obtenemos la fecha de hoy en formato ISO (yyyy-MM-dd) para comparar
+    const hoy = new Date();
+    const hoyISO = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
+
     let html = '';
     registros.forEach(r => {
+      // 👇 Si la fecha del reporte es HOY, le asignamos la clase verde claro
+      let claseFila = (r.fechaEnvioISO === hoyISO) ? 'fila-hoy' : '';
+
       html += `
-        <tr>
+        <tr class="${claseFila}">
           <td><small>${r.id}</small></td>
           <td><small>${r.fechaEnvio}</small></td>
           <td><strong>${r.opt}</strong></td>
