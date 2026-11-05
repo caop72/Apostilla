@@ -15,10 +15,11 @@
     .chart-container { position: relative; height: 50vw; max-height: 300px; width: 100%; }
     .tabla-seguimiento { font-size: 0.85rem; }
     .tabla-seguimiento th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
-        /* Estilo para resaltar los reportes del día de hoy */
+    
+    /* Estilo para resaltar los reportes del día de hoy */
     .fila-hoy {
-      background-color: #e8f5e9 !important; 
-      border-left: 4px solid #198754;
+      background-color: #d1e7dd !important; 
+      border-left: 5px solid #198754;
     }
   </style>
 </head>
@@ -181,26 +182,21 @@
     document.getElementById('countTabla').innerText = registros.length + ' registros';
     
     // Ordenar del más reciente al más antiguo
-    registros.sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
+    registros.sort((a, b) => String(b.id).localeCompare(String(a.id)));
     
     if (registros.length === 0) { 
       tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">No hay registros.</td></tr>'; 
       return; 
     }
 
-    // 👇 OBTENEMOS LA FECHA DE HOY EN FORMATO TEXTO (DD/MM/YYYY)
-    const hoy = new Date();
-    const diaHoy = String(hoy.getDate()).padStart(2, '0');
-    const mesHoy = String(hoy.getMonth() + 1).padStart(2, '0');
-    const anioHoy = hoy.getFullYear();
-    const fechaHoyTexto = `${diaHoy}/${mesHoy}/${anioHoy}`; 
-
     let html = '';
-    registros.forEach(r => {
-      // 👇 Comparamos si los primeros 10 caracteres de la fecha (dd/MM/yyyy) coinciden con hoy
-      // (Usamos los primeros 10 porque la fecha viene con hora: "04/11/2026 16:04:49")
-      let fechaReporteTexto = String(r.fechaEnvio).substring(0, 10); 
-      let claseFila = (fechaReporteTexto === fechaHoyTexto) ? 'fila-hoy' : '';
+    registros.forEach((r, index) => {
+      // Tomamos la fecha del PRIMER reporte de la lista (el más reciente) como referencia de "hoy"
+      // Si el reporte actual empieza con la misma fecha, se pinta de verde.
+      let fechaDelPrimero = String(registros[0].fechaEnvio).substring(0, 10);
+      let fechaDeEste = String(r.fechaEnvio).substring(0, 10);
+      
+      let claseFila = (fechaDeEste === fechaDelPrimero) ? 'fila-hoy' : '';
 
       html += `
         <tr class="${claseFila}">
